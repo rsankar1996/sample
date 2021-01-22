@@ -1,0 +1,963 @@
+ARM GAS  /tmp/cccOmdGm.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.eabi_attribute 28, 1
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 1
+  10              		.eabi_attribute 34, 1
+  11              		.eabi_attribute 18, 4
+  12              		.file	"sx8650.c"
+  13              		.text
+  14              	.Ltext0:
+  15              		.cfi_sections	.debug_frame
+  16              		.section	.text.sx8650_ReadID,"ax",%progbits
+  17              		.align	1
+  18              		.global	sx8650_ReadID
+  19              		.arch armv7e-m
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv5-d16
+  25              	sx8650_ReadID:
+  26              	.LVL0:
+  27              	.LFB5:
+  28              		.file 1 "common/Src/sx8650.c"
+   1:common/Src/sx8650.c **** /**
+   2:common/Src/sx8650.c ****   ******************************************************************************
+   3:common/Src/sx8650.c ****   * @file    sx8650.c
+   4:common/Src/sx8650.c ****   * @brief   This file provides a set of functions needed to manage the SX8650
+   5:common/Src/sx8650.c ****   *          IO Expander devices.
+   6:common/Src/sx8650.c ****   ******************************************************************************
+   7:common/Src/sx8650.c ****   */
+   8:common/Src/sx8650.c **** 
+   9:common/Src/sx8650.c **** /* Includes ------------------------------------------------------------------*/
+  10:common/Src/sx8650.c **** #include "sx8650.h"
+  11:common/Src/sx8650.c **** #include <stdio.h>
+  12:common/Src/sx8650.c **** /** @addtogroup BSP
+  13:common/Src/sx8650.c ****   * @{
+  14:common/Src/sx8650.c ****   */
+  15:common/Src/sx8650.c **** 
+  16:common/Src/sx8650.c **** /** @addtogroup Component
+  17:common/Src/sx8650.c ****   * @{
+  18:common/Src/sx8650.c ****   */
+  19:common/Src/sx8650.c **** 
+  20:common/Src/sx8650.c **** /** @defgroup SX8650
+  21:common/Src/sx8650.c ****   * @{
+  22:common/Src/sx8650.c ****   */
+  23:common/Src/sx8650.c **** 
+  24:common/Src/sx8650.c **** /* Private typedef -----------------------------------------------------------*/
+  25:common/Src/sx8650.c **** 
+  26:common/Src/sx8650.c **** /** @defgroup SX8650_Private_Types_Definitions
+  27:common/Src/sx8650.c ****   * @{
+  28:common/Src/sx8650.c ****   */
+  29:common/Src/sx8650.c **** 
+  30:common/Src/sx8650.c **** /* Private define ------------------------------------------------------------*/
+ARM GAS  /tmp/cccOmdGm.s 			page 2
+
+
+  31:common/Src/sx8650.c **** 
+  32:common/Src/sx8650.c **** /** @defgroup SX8650_Private_Defines
+  33:common/Src/sx8650.c ****   * @{
+  34:common/Src/sx8650.c ****   */
+  35:common/Src/sx8650.c **** 
+  36:common/Src/sx8650.c **** /* Private macro -------------------------------------------------------------*/
+  37:common/Src/sx8650.c **** 
+  38:common/Src/sx8650.c **** /** @defgroup SX8650_Private_Macros
+  39:common/Src/sx8650.c ****   * @{
+  40:common/Src/sx8650.c ****   */
+  41:common/Src/sx8650.c **** 
+  42:common/Src/sx8650.c **** /* Private variables ---------------------------------------------------------*/
+  43:common/Src/sx8650.c **** static uint16_t touch_x;
+  44:common/Src/sx8650.c **** static uint16_t touch_y;
+  45:common/Src/sx8650.c **** 
+  46:common/Src/sx8650.c **** /** @defgroup SX8650_Private_Variables
+  47:common/Src/sx8650.c ****   * @{
+  48:common/Src/sx8650.c ****   */
+  49:common/Src/sx8650.c **** 
+  50:common/Src/sx8650.c **** /* Touch screen driver structure initialization */
+  51:common/Src/sx8650.c **** TS_DrvTypeDef sx8650_ts_drv =
+  52:common/Src/sx8650.c **** {
+  53:common/Src/sx8650.c ****  sx8650_Init,
+  54:common/Src/sx8650.c ****  sx8650_ReadID,
+  55:common/Src/sx8650.c ****  sx8650_Reset,
+  56:common/Src/sx8650.c **** 
+  57:common/Src/sx8650.c ****  sx8650_TS_Start,
+  58:common/Src/sx8650.c ****  sx8650_TS_DetectTouch,
+  59:common/Src/sx8650.c ****  sx8650_TS_GetXY,
+  60:common/Src/sx8650.c **** 
+  61:common/Src/sx8650.c ****  sx8650_TS_EnableIT,
+  62:common/Src/sx8650.c ****  sx8650_TS_ClearIT,
+  63:common/Src/sx8650.c ****  sx8650_TS_ITStatus,
+  64:common/Src/sx8650.c ****  sx8650_TS_DisableIT,
+  65:common/Src/sx8650.c **** };
+  66:common/Src/sx8650.c **** 
+  67:common/Src/sx8650.c **** /**
+  68:common/Src/sx8650.c ****   * @}
+  69:common/Src/sx8650.c ****   */
+  70:common/Src/sx8650.c **** 
+  71:common/Src/sx8650.c **** /* Private function prototypes -----------------------------------------------*/
+  72:common/Src/sx8650.c **** 
+  73:common/Src/sx8650.c **** /** @defgroup sx8650_Private_Function_Prototypes
+  74:common/Src/sx8650.c ****   * @{
+  75:common/Src/sx8650.c ****   */
+  76:common/Src/sx8650.c **** 
+  77:common/Src/sx8650.c **** /* Private functions ---------------------------------------------------------*/
+  78:common/Src/sx8650.c **** 
+  79:common/Src/sx8650.c **** /** @defgroup sx8650_Private_Functions
+  80:common/Src/sx8650.c ****   * @{
+  81:common/Src/sx8650.c ****   */
+  82:common/Src/sx8650.c **** 
+  83:common/Src/sx8650.c **** /**
+  84:common/Src/sx8650.c ****   * @brief  Initialize the sx8650 and configure the needed hardware resources
+  85:common/Src/sx8650.c ****   * @param  DeviceAddr: Device address on communication Bus.
+  86:common/Src/sx8650.c ****   * @retval None
+  87:common/Src/sx8650.c ****   */
+ARM GAS  /tmp/cccOmdGm.s 			page 3
+
+
+  88:common/Src/sx8650.c **** void sx8650_Init(uint16_t DeviceAddr)
+  89:common/Src/sx8650.c **** {
+  90:common/Src/sx8650.c ****         /* Initialize IO BUS layer */
+  91:common/Src/sx8650.c ****         IOE_Init();
+  92:common/Src/sx8650.c **** }
+  93:common/Src/sx8650.c **** 
+  94:common/Src/sx8650.c **** /**
+  95:common/Src/sx8650.c ****   * @brief  Reset the sx8650 by Software.
+  96:common/Src/sx8650.c ****   * @param  DeviceAddr: Device address on communication Bus.
+  97:common/Src/sx8650.c ****   * @retval None
+  98:common/Src/sx8650.c ****   */
+  99:common/Src/sx8650.c **** void sx8650_Reset(uint16_t DeviceAddr)
+ 100:common/Src/sx8650.c **** {
+ 101:common/Src/sx8650.c ****         uint8_t cmd;
+ 102:common/Src/sx8650.c **** 
+ 103:common/Src/sx8650.c ****         cmd = SOFTRESET_VALUE;
+ 104:common/Src/sx8650.c ****         IOE_WriteMultiple(DeviceAddr, SX8650_REG_RESET, &cmd, 1);
+ 105:common/Src/sx8650.c **** }
+ 106:common/Src/sx8650.c **** 
+ 107:common/Src/sx8650.c **** /**
+ 108:common/Src/sx8650.c ****   * @brief  Read the sx8650 IO Expander device ID.
+ 109:common/Src/sx8650.c ****   * @param  DeviceAddr: Device address on communication Bus.
+ 110:common/Src/sx8650.c ****   * @retval The Device ID (two bytes).
+ 111:common/Src/sx8650.c ****   */
+ 112:common/Src/sx8650.c **** uint16_t sx8650_ReadID(uint16_t DeviceAddr)
+ 113:common/Src/sx8650.c **** {
+  29              		.loc 1 113 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		@ link register save eliminated.
+ 114:common/Src/sx8650.c ****         return 0;
+  34              		.loc 1 114 9 view .LVU1
+ 115:common/Src/sx8650.c **** }
+  35              		.loc 1 115 1 is_stmt 0 view .LVU2
+  36 0000 0020     		movs	r0, #0
+  37              	.LVL1:
+  38              		.loc 1 115 1 view .LVU3
+  39 0002 7047     		bx	lr
+  40              		.cfi_endproc
+  41              	.LFE5:
+  43              		.section	.text.sx8650_TS_GetXY,"ax",%progbits
+  44              		.align	1
+  45              		.global	sx8650_TS_GetXY
+  46              		.syntax unified
+  47              		.thumb
+  48              		.thumb_func
+  49              		.fpu fpv5-d16
+  51              	sx8650_TS_GetXY:
+  52              	.LVL2:
+  53              	.LFB8:
+ 116:common/Src/sx8650.c **** 
+ 117:common/Src/sx8650.c **** /**
+ 118:common/Src/sx8650.c ****   * @brief  Configures the touch Screen Controller (Single point detection)
+ 119:common/Src/sx8650.c ****   * @param  DeviceAddr: Device address on communication Bus.
+ 120:common/Src/sx8650.c ****   * @retval None.
+ 121:common/Src/sx8650.c ****   */
+ARM GAS  /tmp/cccOmdGm.s 			page 4
+
+
+ 122:common/Src/sx8650.c **** void sx8650_TS_Start(uint16_t DeviceAddr)
+ 123:common/Src/sx8650.c **** {
+ 124:common/Src/sx8650.c ****         uint8_t cmd;
+ 125:common/Src/sx8650.c **** 
+ 126:common/Src/sx8650.c ****         /** Configuring mode */
+ 127:common/Src/sx8650.c ****         cmd = SX8650_CTRL0_TOUCHRATE_0010CPS | SX8650_CTRL0_POWDLY_8_9US;
+ 128:common/Src/sx8650.c ****         IOE_WriteMultiple(DeviceAddr, SX8650_REG_CTRL0, &cmd, 1);
+ 129:common/Src/sx8650.c **** 
+ 130:common/Src/sx8650.c ****         cmd = SX8650_CTRL1_RESERVED | SX8650_CTRL1_RPDNT_RESISTOR_VALUE_CFG | SX8650_CTRL1_FILT_NFI
+ 131:common/Src/sx8650.c ****         IOE_WriteMultiple(DeviceAddr, SX8650_REG_CTRL1, &cmd, 1);
+ 132:common/Src/sx8650.c **** 
+ 133:common/Src/sx8650.c ****         cmd = SX8650_CTRL2_SETDLY_8_9US;
+ 134:common/Src/sx8650.c ****         IOE_WriteMultiple(DeviceAddr, SX8650_REG_CTRL2, &cmd, 1);
+ 135:common/Src/sx8650.c **** 
+ 136:common/Src/sx8650.c ****         /** Configure X/Y channel */
+ 137:common/Src/sx8650.c ****         cmd = SX8650_CHANMSK_XCONV | SX8650_CHANMSK_YCONV;
+ 138:common/Src/sx8650.c ****         IOE_WriteMultiple(DeviceAddr, SX8650_REG_CHANMSK, &cmd, 1);
+ 139:common/Src/sx8650.c **** 
+ 140:common/Src/sx8650.c ****         /** Enables pen trigger mode */
+ 141:common/Src/sx8650.c ****         cmd = SX8650_CMD_PENTRG;
+ 142:common/Src/sx8650.c ****         IOE_WriteMultiple(DeviceAddr, SX8650_I2C_ADDRESS, &cmd, 1);
+ 143:common/Src/sx8650.c **** }
+ 144:common/Src/sx8650.c **** 
+ 145:common/Src/sx8650.c **** /**
+ 146:common/Src/sx8650.c ****   * @brief  Return if there is touch detected or not.
+ 147:common/Src/sx8650.c ****   * @param  DeviceAddr: Device address on communication Bus.
+ 148:common/Src/sx8650.c ****   * @retval Touch detected state.
+ 149:common/Src/sx8650.c ****   */
+ 150:common/Src/sx8650.c **** uint8_t sx8650_TS_DetectTouch(uint16_t DeviceAddr)
+ 151:common/Src/sx8650.c **** {
+ 152:common/Src/sx8650.c ****         uint8_t state;
+ 153:common/Src/sx8650.c ****         uint8_t reg;
+ 154:common/Src/sx8650.c ****         uint8_t data[4];
+ 155:common/Src/sx8650.c ****         uint16_t x = 0;
+ 156:common/Src/sx8650.c ****         uint16_t y = 0;
+ 157:common/Src/sx8650.c ****         uint8_t i;
+ 158:common/Src/sx8650.c **** 
+ 159:common/Src/sx8650.c ****         reg = SX8650_CMD_READ_REG | SX8650_REG_STAT;
+ 160:common/Src/sx8650.c ****         state = IOE_Read(DeviceAddr, reg);
+ 161:common/Src/sx8650.c **** 
+ 162:common/Src/sx8650.c ****         if ((state & (1 << 7)) == 0) {
+ 163:common/Src/sx8650.c ****                 return 0;
+ 164:common/Src/sx8650.c ****         }
+ 165:common/Src/sx8650.c **** 
+ 166:common/Src/sx8650.c ****         for (i = 0; i < 5; i++) {
+ 167:common/Src/sx8650.c **** 
+ 168:common/Src/sx8650.c ****                 IOE_ReadMultiple(DeviceAddr, SX8650_I2C_ADDRESS, data, sizeof(data));
+ 169:common/Src/sx8650.c **** 
+ 170:common/Src/sx8650.c ****                 if ((((data[0] & 0x0F) << 8) | (data[1] & 0xFF)) == 0xFFF)
+ 171:common/Src/sx8650.c ****                         return 0;
+ 172:common/Src/sx8650.c **** 
+ 173:common/Src/sx8650.c **** 
+ 174:common/Src/sx8650.c ****                 if (i >= 3) {
+ 175:common/Src/sx8650.c ****                         x += ((data[0] & 0x0F) << 8) | (data[1] & 0xFF);
+ 176:common/Src/sx8650.c ****                         y += ((data[2] & 0x0F) << 8) | (data[3] & 0xFF);
+ 177:common/Src/sx8650.c ****                 }
+ 178:common/Src/sx8650.c **** 
+ARM GAS  /tmp/cccOmdGm.s 			page 5
+
+
+ 179:common/Src/sx8650.c **** 
+ 180:common/Src/sx8650.c ****                 IOE_Delay(5);
+ 181:common/Src/sx8650.c ****         }
+ 182:common/Src/sx8650.c **** 
+ 183:common/Src/sx8650.c ****         touch_x = x / 2;
+ 184:common/Src/sx8650.c ****         touch_y = y / 2;
+ 185:common/Src/sx8650.c **** 
+ 186:common/Src/sx8650.c ****         return 1;
+ 187:common/Src/sx8650.c **** }
+ 188:common/Src/sx8650.c **** 
+ 189:common/Src/sx8650.c **** /**
+ 190:common/Src/sx8650.c ****   * @brief  Get the touch screen X and Y positions values
+ 191:common/Src/sx8650.c ****   * @param  DeviceAddr: Device address on communication Bus.
+ 192:common/Src/sx8650.c ****   * @param  X: Pointer to X position value
+ 193:common/Src/sx8650.c ****   * @param  Y: Pointer to Y position value
+ 194:common/Src/sx8650.c ****   * @retval None.
+ 195:common/Src/sx8650.c ****   */
+ 196:common/Src/sx8650.c **** void sx8650_TS_GetXY(uint16_t DeviceAddr, uint16_t *X, uint16_t *Y)
+ 197:common/Src/sx8650.c **** {
+  54              		.loc 1 197 1 is_stmt 1 view -0
+  55              		.cfi_startproc
+  56              		@ args = 0, pretend = 0, frame = 0
+  57              		@ frame_needed = 0, uses_anonymous_args = 0
+  58              		@ link register save eliminated.
+ 198:common/Src/sx8650.c ****         *X = touch_x;
+  59              		.loc 1 198 9 view .LVU5
+  60              		.loc 1 198 12 is_stmt 0 view .LVU6
+  61 0000 034B     		ldr	r3, .L3
+  62 0002 1B88     		ldrh	r3, [r3]
+  63 0004 0B80     		strh	r3, [r1]	@ movhi
+ 199:common/Src/sx8650.c ****         *Y = touch_y;
+  64              		.loc 1 199 9 is_stmt 1 view .LVU7
+  65              		.loc 1 199 12 is_stmt 0 view .LVU8
+  66 0006 034B     		ldr	r3, .L3+4
+  67 0008 1B88     		ldrh	r3, [r3]
+  68 000a 1380     		strh	r3, [r2]	@ movhi
+ 200:common/Src/sx8650.c **** }
+  69              		.loc 1 200 1 view .LVU9
+  70 000c 7047     		bx	lr
+  71              	.L4:
+  72 000e 00BF     		.align	2
+  73              	.L3:
+  74 0010 00000000 		.word	.LANCHOR0
+  75 0014 00000000 		.word	.LANCHOR1
+  76              		.cfi_endproc
+  77              	.LFE8:
+  79              		.section	.text.sx8650_TS_EnableIT,"ax",%progbits
+  80              		.align	1
+  81              		.global	sx8650_TS_EnableIT
+  82              		.syntax unified
+  83              		.thumb
+  84              		.thumb_func
+  85              		.fpu fpv5-d16
+  87              	sx8650_TS_EnableIT:
+  88              	.LVL3:
+  89              	.LFB9:
+ 201:common/Src/sx8650.c **** 
+ARM GAS  /tmp/cccOmdGm.s 			page 6
+
+
+ 202:common/Src/sx8650.c **** /**
+ 203:common/Src/sx8650.c ****   * @brief  Configure the selected source to generate a global interrupt or not
+ 204:common/Src/sx8650.c ****   * @param  DeviceAddr: Device address on communication Bus.
+ 205:common/Src/sx8650.c ****   * @retval None
+ 206:common/Src/sx8650.c ****   */
+ 207:common/Src/sx8650.c **** void sx8650_TS_EnableIT(uint16_t DeviceAddr)
+ 208:common/Src/sx8650.c **** {
+  90              		.loc 1 208 1 is_stmt 1 view -0
+  91              		.cfi_startproc
+  92              		@ args = 0, pretend = 0, frame = 0
+  93              		@ frame_needed = 0, uses_anonymous_args = 0
+  94              		@ link register save eliminated.
+ 209:common/Src/sx8650.c **** }
+  95              		.loc 1 209 1 view .LVU11
+  96 0000 7047     		bx	lr
+  97              		.cfi_endproc
+  98              	.LFE9:
+ 100              		.section	.text.sx8650_TS_DisableIT,"ax",%progbits
+ 101              		.align	1
+ 102              		.global	sx8650_TS_DisableIT
+ 103              		.syntax unified
+ 104              		.thumb
+ 105              		.thumb_func
+ 106              		.fpu fpv5-d16
+ 108              	sx8650_TS_DisableIT:
+ 109              	.LVL4:
+ 110              	.LFB10:
+ 210:common/Src/sx8650.c **** 
+ 211:common/Src/sx8650.c **** /**
+ 212:common/Src/sx8650.c ****   * @brief  Configure the selected source to generate a global interrupt or not
+ 213:common/Src/sx8650.c ****   * @param  DeviceAddr: Device address on communication Bus.
+ 214:common/Src/sx8650.c ****   * @retval None
+ 215:common/Src/sx8650.c ****   */
+ 216:common/Src/sx8650.c **** void sx8650_TS_DisableIT(uint16_t DeviceAddr)
+ 217:common/Src/sx8650.c **** {
+ 111              		.loc 1 217 1 view -0
+ 112              		.cfi_startproc
+ 113              		@ args = 0, pretend = 0, frame = 0
+ 114              		@ frame_needed = 0, uses_anonymous_args = 0
+ 115              		@ link register save eliminated.
+ 218:common/Src/sx8650.c **** }
+ 116              		.loc 1 218 1 view .LVU13
+ 117 0000 7047     		bx	lr
+ 118              		.cfi_endproc
+ 119              	.LFE10:
+ 121              		.section	.text.sx8650_Init,"ax",%progbits
+ 122              		.align	1
+ 123              		.global	sx8650_Init
+ 124              		.syntax unified
+ 125              		.thumb
+ 126              		.thumb_func
+ 127              		.fpu fpv5-d16
+ 129              	sx8650_Init:
+ 130              	.LVL5:
+ 131              	.LFB3:
+  89:common/Src/sx8650.c ****         /* Initialize IO BUS layer */
+ 132              		.loc 1 89 1 view -0
+ARM GAS  /tmp/cccOmdGm.s 			page 7
+
+
+ 133              		.cfi_startproc
+ 134              		@ args = 0, pretend = 0, frame = 0
+ 135              		@ frame_needed = 0, uses_anonymous_args = 0
+  89:common/Src/sx8650.c ****         /* Initialize IO BUS layer */
+ 136              		.loc 1 89 1 is_stmt 0 view .LVU15
+ 137 0000 08B5     		push	{r3, lr}
+ 138              	.LCFI0:
+ 139              		.cfi_def_cfa_offset 8
+ 140              		.cfi_offset 3, -8
+ 141              		.cfi_offset 14, -4
+  91:common/Src/sx8650.c **** }
+ 142              		.loc 1 91 9 is_stmt 1 view .LVU16
+ 143 0002 FFF7FEFF 		bl	IOE_Init
+ 144              	.LVL6:
+  92:common/Src/sx8650.c **** 
+ 145              		.loc 1 92 1 is_stmt 0 view .LVU17
+ 146 0006 08BD     		pop	{r3, pc}
+ 147              		.cfi_endproc
+ 148              	.LFE3:
+ 150              		.section	.text.sx8650_Reset,"ax",%progbits
+ 151              		.align	1
+ 152              		.global	sx8650_Reset
+ 153              		.syntax unified
+ 154              		.thumb
+ 155              		.thumb_func
+ 156              		.fpu fpv5-d16
+ 158              	sx8650_Reset:
+ 159              	.LVL7:
+ 160              	.LFB4:
+ 100:common/Src/sx8650.c ****         uint8_t cmd;
+ 161              		.loc 1 100 1 is_stmt 1 view -0
+ 162              		.cfi_startproc
+ 163              		@ args = 0, pretend = 0, frame = 8
+ 164              		@ frame_needed = 0, uses_anonymous_args = 0
+ 100:common/Src/sx8650.c ****         uint8_t cmd;
+ 165              		.loc 1 100 1 is_stmt 0 view .LVU19
+ 166 0000 00B5     		push	{lr}
+ 167              	.LCFI1:
+ 168              		.cfi_def_cfa_offset 4
+ 169              		.cfi_offset 14, -4
+ 170 0002 83B0     		sub	sp, sp, #12
+ 171              	.LCFI2:
+ 172              		.cfi_def_cfa_offset 16
+ 101:common/Src/sx8650.c **** 
+ 173              		.loc 1 101 9 is_stmt 1 view .LVU20
+ 103:common/Src/sx8650.c ****         IOE_WriteMultiple(DeviceAddr, SX8650_REG_RESET, &cmd, 1);
+ 174              		.loc 1 103 9 view .LVU21
+ 103:common/Src/sx8650.c ****         IOE_WriteMultiple(DeviceAddr, SX8650_REG_RESET, &cmd, 1);
+ 175              		.loc 1 103 13 is_stmt 0 view .LVU22
+ 176 0004 DE23     		movs	r3, #222
+ 177 0006 8DF80730 		strb	r3, [sp, #7]
+ 104:common/Src/sx8650.c **** }
+ 178              		.loc 1 104 9 is_stmt 1 view .LVU23
+ 179 000a 0123     		movs	r3, #1
+ 180 000c 0DF10702 		add	r2, sp, #7
+ 181 0010 1F21     		movs	r1, #31
+ 182 0012 C0B2     		uxtb	r0, r0
+ARM GAS  /tmp/cccOmdGm.s 			page 8
+
+
+ 183              	.LVL8:
+ 104:common/Src/sx8650.c **** }
+ 184              		.loc 1 104 9 is_stmt 0 view .LVU24
+ 185 0014 FFF7FEFF 		bl	IOE_WriteMultiple
+ 186              	.LVL9:
+ 105:common/Src/sx8650.c **** 
+ 187              		.loc 1 105 1 view .LVU25
+ 188 0018 03B0     		add	sp, sp, #12
+ 189              	.LCFI3:
+ 190              		.cfi_def_cfa_offset 4
+ 191              		@ sp needed
+ 192 001a 5DF804FB 		ldr	pc, [sp], #4
+ 193              		.cfi_endproc
+ 194              	.LFE4:
+ 196              		.section	.text.sx8650_TS_Start,"ax",%progbits
+ 197              		.align	1
+ 198              		.global	sx8650_TS_Start
+ 199              		.syntax unified
+ 200              		.thumb
+ 201              		.thumb_func
+ 202              		.fpu fpv5-d16
+ 204              	sx8650_TS_Start:
+ 205              	.LVL10:
+ 206              	.LFB6:
+ 123:common/Src/sx8650.c ****         uint8_t cmd;
+ 207              		.loc 1 123 1 is_stmt 1 view -0
+ 208              		.cfi_startproc
+ 209              		@ args = 0, pretend = 0, frame = 8
+ 210              		@ frame_needed = 0, uses_anonymous_args = 0
+ 123:common/Src/sx8650.c ****         uint8_t cmd;
+ 211              		.loc 1 123 1 is_stmt 0 view .LVU27
+ 212 0000 10B5     		push	{r4, lr}
+ 213              	.LCFI4:
+ 214              		.cfi_def_cfa_offset 8
+ 215              		.cfi_offset 4, -8
+ 216              		.cfi_offset 14, -4
+ 217 0002 82B0     		sub	sp, sp, #8
+ 218              	.LCFI5:
+ 219              		.cfi_def_cfa_offset 16
+ 124:common/Src/sx8650.c **** 
+ 220              		.loc 1 124 9 is_stmt 1 view .LVU28
+ 127:common/Src/sx8650.c ****         IOE_WriteMultiple(DeviceAddr, SX8650_REG_CTRL0, &cmd, 1);
+ 221              		.loc 1 127 9 view .LVU29
+ 127:common/Src/sx8650.c ****         IOE_WriteMultiple(DeviceAddr, SX8650_REG_CTRL0, &cmd, 1);
+ 222              		.loc 1 127 13 is_stmt 0 view .LVU30
+ 223 0004 1F23     		movs	r3, #31
+ 224 0006 8DF80730 		strb	r3, [sp, #7]
+ 128:common/Src/sx8650.c **** 
+ 225              		.loc 1 128 9 is_stmt 1 view .LVU31
+ 226 000a C4B2     		uxtb	r4, r0
+ 227 000c 0123     		movs	r3, #1
+ 228 000e 0DF10702 		add	r2, sp, #7
+ 229 0012 0021     		movs	r1, #0
+ 230 0014 2046     		mov	r0, r4
+ 231              	.LVL11:
+ 128:common/Src/sx8650.c **** 
+ 232              		.loc 1 128 9 is_stmt 0 view .LVU32
+ARM GAS  /tmp/cccOmdGm.s 			page 9
+
+
+ 233 0016 FFF7FEFF 		bl	IOE_WriteMultiple
+ 234              	.LVL12:
+ 130:common/Src/sx8650.c ****         IOE_WriteMultiple(DeviceAddr, SX8650_REG_CTRL1, &cmd, 1);
+ 235              		.loc 1 130 9 is_stmt 1 view .LVU33
+ 130:common/Src/sx8650.c ****         IOE_WriteMultiple(DeviceAddr, SX8650_REG_CTRL1, &cmd, 1);
+ 236              		.loc 1 130 13 is_stmt 0 view .LVU34
+ 237 001a 2723     		movs	r3, #39
+ 238 001c 8DF80730 		strb	r3, [sp, #7]
+ 131:common/Src/sx8650.c **** 
+ 239              		.loc 1 131 9 is_stmt 1 view .LVU35
+ 240 0020 0123     		movs	r3, #1
+ 241 0022 0DF10702 		add	r2, sp, #7
+ 242 0026 1946     		mov	r1, r3
+ 243 0028 2046     		mov	r0, r4
+ 244 002a FFF7FEFF 		bl	IOE_WriteMultiple
+ 245              	.LVL13:
+ 133:common/Src/sx8650.c ****         IOE_WriteMultiple(DeviceAddr, SX8650_REG_CTRL2, &cmd, 1);
+ 246              		.loc 1 133 9 view .LVU36
+ 133:common/Src/sx8650.c ****         IOE_WriteMultiple(DeviceAddr, SX8650_REG_CTRL2, &cmd, 1);
+ 247              		.loc 1 133 13 is_stmt 0 view .LVU37
+ 248 002e 0F23     		movs	r3, #15
+ 249 0030 8DF80730 		strb	r3, [sp, #7]
+ 134:common/Src/sx8650.c **** 
+ 250              		.loc 1 134 9 is_stmt 1 view .LVU38
+ 251 0034 0123     		movs	r3, #1
+ 252 0036 0DF10702 		add	r2, sp, #7
+ 253 003a 0221     		movs	r1, #2
+ 254 003c 2046     		mov	r0, r4
+ 255 003e FFF7FEFF 		bl	IOE_WriteMultiple
+ 256              	.LVL14:
+ 137:common/Src/sx8650.c ****         IOE_WriteMultiple(DeviceAddr, SX8650_REG_CHANMSK, &cmd, 1);
+ 257              		.loc 1 137 9 view .LVU39
+ 137:common/Src/sx8650.c ****         IOE_WriteMultiple(DeviceAddr, SX8650_REG_CHANMSK, &cmd, 1);
+ 258              		.loc 1 137 13 is_stmt 0 view .LVU40
+ 259 0042 C023     		movs	r3, #192
+ 260 0044 8DF80730 		strb	r3, [sp, #7]
+ 138:common/Src/sx8650.c **** 
+ 261              		.loc 1 138 9 is_stmt 1 view .LVU41
+ 262 0048 0123     		movs	r3, #1
+ 263 004a 0DF10702 		add	r2, sp, #7
+ 264 004e 0421     		movs	r1, #4
+ 265 0050 2046     		mov	r0, r4
+ 266 0052 FFF7FEFF 		bl	IOE_WriteMultiple
+ 267              	.LVL15:
+ 141:common/Src/sx8650.c ****         IOE_WriteMultiple(DeviceAddr, SX8650_I2C_ADDRESS, &cmd, 1);
+ 268              		.loc 1 141 9 view .LVU42
+ 141:common/Src/sx8650.c ****         IOE_WriteMultiple(DeviceAddr, SX8650_I2C_ADDRESS, &cmd, 1);
+ 269              		.loc 1 141 13 is_stmt 0 view .LVU43
+ 270 0056 E023     		movs	r3, #224
+ 271 0058 8DF80730 		strb	r3, [sp, #7]
+ 142:common/Src/sx8650.c **** }
+ 272              		.loc 1 142 9 is_stmt 1 view .LVU44
+ 273 005c 0123     		movs	r3, #1
+ 274 005e 0DF10702 		add	r2, sp, #7
+ 275 0062 9021     		movs	r1, #144
+ 276 0064 2046     		mov	r0, r4
+ 277 0066 FFF7FEFF 		bl	IOE_WriteMultiple
+ARM GAS  /tmp/cccOmdGm.s 			page 10
+
+
+ 278              	.LVL16:
+ 143:common/Src/sx8650.c **** 
+ 279              		.loc 1 143 1 is_stmt 0 view .LVU45
+ 280 006a 02B0     		add	sp, sp, #8
+ 281              	.LCFI6:
+ 282              		.cfi_def_cfa_offset 8
+ 283              		@ sp needed
+ 284 006c 10BD     		pop	{r4, pc}
+ 285              		.cfi_endproc
+ 286              	.LFE6:
+ 288              		.section	.text.sx8650_TS_ITStatus,"ax",%progbits
+ 289              		.align	1
+ 290              		.global	sx8650_TS_ITStatus
+ 291              		.syntax unified
+ 292              		.thumb
+ 293              		.thumb_func
+ 294              		.fpu fpv5-d16
+ 296              	sx8650_TS_ITStatus:
+ 297              	.LVL17:
+ 298              	.LFB11:
+ 219:common/Src/sx8650.c **** 
+ 220:common/Src/sx8650.c **** /**
+ 221:common/Src/sx8650.c ****   * @brief  Configure the selected source to generate a global interrupt or not
+ 222:common/Src/sx8650.c ****   * @param  DeviceAddr: Device address on communication Bus.
+ 223:common/Src/sx8650.c ****   * @retval TS interrupts status
+ 224:common/Src/sx8650.c ****   */
+ 225:common/Src/sx8650.c **** uint8_t sx8650_TS_ITStatus(uint16_t DeviceAddr)
+ 226:common/Src/sx8650.c **** {
+ 299              		.loc 1 226 1 is_stmt 1 view -0
+ 300              		.cfi_startproc
+ 301              		@ args = 0, pretend = 0, frame = 0
+ 302              		@ frame_needed = 0, uses_anonymous_args = 0
+ 303              		.loc 1 226 1 is_stmt 0 view .LVU47
+ 304 0000 08B5     		push	{r3, lr}
+ 305              	.LCFI7:
+ 306              		.cfi_def_cfa_offset 8
+ 307              		.cfi_offset 3, -8
+ 308              		.cfi_offset 14, -4
+ 227:common/Src/sx8650.c ****         uint8_t reg;
+ 309              		.loc 1 227 9 is_stmt 1 view .LVU48
+ 228:common/Src/sx8650.c **** 
+ 229:common/Src/sx8650.c ****         reg = SX8650_CMD_READ_REG | SX8650_REG_STAT;
+ 310              		.loc 1 229 9 view .LVU49
+ 311              	.LVL18:
+ 230:common/Src/sx8650.c ****         return IOE_Read(DeviceAddr, reg);
+ 312              		.loc 1 230 9 view .LVU50
+ 313              		.loc 1 230 16 is_stmt 0 view .LVU51
+ 314 0002 4521     		movs	r1, #69
+ 315 0004 C0B2     		uxtb	r0, r0
+ 316              	.LVL19:
+ 317              		.loc 1 230 16 view .LVU52
+ 318 0006 FFF7FEFF 		bl	IOE_Read
+ 319              	.LVL20:
+ 231:common/Src/sx8650.c **** }
+ 320              		.loc 1 231 1 view .LVU53
+ 321 000a 08BD     		pop	{r3, pc}
+ 322              		.cfi_endproc
+ARM GAS  /tmp/cccOmdGm.s 			page 11
+
+
+ 323              	.LFE11:
+ 325              		.section	.text.sx8650_TS_ClearIT,"ax",%progbits
+ 326              		.align	1
+ 327              		.global	sx8650_TS_ClearIT
+ 328              		.syntax unified
+ 329              		.thumb
+ 330              		.thumb_func
+ 331              		.fpu fpv5-d16
+ 333              	sx8650_TS_ClearIT:
+ 334              	.LVL21:
+ 335              	.LFB12:
+ 232:common/Src/sx8650.c **** 
+ 233:common/Src/sx8650.c **** /**
+ 234:common/Src/sx8650.c ****   * @brief  Configure the selected source to generate a global interrupt or not
+ 235:common/Src/sx8650.c ****   * @param  DeviceAddr: Device address on communication Bus.
+ 236:common/Src/sx8650.c ****   * @retval None
+ 237:common/Src/sx8650.c ****   */
+ 238:common/Src/sx8650.c **** void sx8650_TS_ClearIT(uint16_t DeviceAddr)
+ 239:common/Src/sx8650.c **** {
+ 336              		.loc 1 239 1 is_stmt 1 view -0
+ 337              		.cfi_startproc
+ 338              		@ args = 0, pretend = 0, frame = 0
+ 339              		@ frame_needed = 0, uses_anonymous_args = 0
+ 340              		.loc 1 239 1 is_stmt 0 view .LVU55
+ 341 0000 08B5     		push	{r3, lr}
+ 342              	.LCFI8:
+ 343              		.cfi_def_cfa_offset 8
+ 344              		.cfi_offset 3, -8
+ 345              		.cfi_offset 14, -4
+ 240:common/Src/sx8650.c ****         uint8_t reg;
+ 346              		.loc 1 240 9 is_stmt 1 view .LVU56
+ 241:common/Src/sx8650.c **** 
+ 242:common/Src/sx8650.c ****         reg = SX8650_CMD_READ_REG | SX8650_REG_STAT;
+ 347              		.loc 1 242 9 view .LVU57
+ 348              	.LVL22:
+ 243:common/Src/sx8650.c ****         IOE_Read(DeviceAddr, reg);
+ 349              		.loc 1 243 9 view .LVU58
+ 350 0002 4521     		movs	r1, #69
+ 351 0004 C0B2     		uxtb	r0, r0
+ 352              	.LVL23:
+ 353              		.loc 1 243 9 is_stmt 0 view .LVU59
+ 354 0006 FFF7FEFF 		bl	IOE_Read
+ 355              	.LVL24:
+ 244:common/Src/sx8650.c **** }
+ 356              		.loc 1 244 1 view .LVU60
+ 357 000a 08BD     		pop	{r3, pc}
+ 358              		.cfi_endproc
+ 359              	.LFE12:
+ 361              		.section	.text.sx8650_TS_DetectTouch,"ax",%progbits
+ 362              		.align	1
+ 363              		.global	sx8650_TS_DetectTouch
+ 364              		.syntax unified
+ 365              		.thumb
+ 366              		.thumb_func
+ 367              		.fpu fpv5-d16
+ 369              	sx8650_TS_DetectTouch:
+ 370              	.LVL25:
+ARM GAS  /tmp/cccOmdGm.s 			page 12
+
+
+ 371              	.LFB7:
+ 151:common/Src/sx8650.c ****         uint8_t state;
+ 372              		.loc 1 151 1 is_stmt 1 view -0
+ 373              		.cfi_startproc
+ 374              		@ args = 0, pretend = 0, frame = 8
+ 375              		@ frame_needed = 0, uses_anonymous_args = 0
+ 151:common/Src/sx8650.c ****         uint8_t state;
+ 376              		.loc 1 151 1 is_stmt 0 view .LVU62
+ 377 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 378              	.LCFI9:
+ 379              		.cfi_def_cfa_offset 20
+ 380              		.cfi_offset 4, -20
+ 381              		.cfi_offset 5, -16
+ 382              		.cfi_offset 6, -12
+ 383              		.cfi_offset 7, -8
+ 384              		.cfi_offset 14, -4
+ 385 0002 83B0     		sub	sp, sp, #12
+ 386              	.LCFI10:
+ 387              		.cfi_def_cfa_offset 32
+ 152:common/Src/sx8650.c ****         uint8_t reg;
+ 388              		.loc 1 152 9 is_stmt 1 view .LVU63
+ 153:common/Src/sx8650.c ****         uint8_t data[4];
+ 389              		.loc 1 153 9 view .LVU64
+ 154:common/Src/sx8650.c ****         uint16_t x = 0;
+ 390              		.loc 1 154 9 view .LVU65
+ 155:common/Src/sx8650.c ****         uint16_t y = 0;
+ 391              		.loc 1 155 9 view .LVU66
+ 392              	.LVL26:
+ 156:common/Src/sx8650.c ****         uint8_t i;
+ 393              		.loc 1 156 9 view .LVU67
+ 157:common/Src/sx8650.c **** 
+ 394              		.loc 1 157 9 view .LVU68
+ 159:common/Src/sx8650.c ****         state = IOE_Read(DeviceAddr, reg);
+ 395              		.loc 1 159 9 view .LVU69
+ 160:common/Src/sx8650.c **** 
+ 396              		.loc 1 160 9 view .LVU70
+ 160:common/Src/sx8650.c **** 
+ 397              		.loc 1 160 17 is_stmt 0 view .LVU71
+ 398 0004 C5B2     		uxtb	r5, r0
+ 399 0006 4521     		movs	r1, #69
+ 400 0008 2846     		mov	r0, r5
+ 401              	.LVL27:
+ 160:common/Src/sx8650.c **** 
+ 402              		.loc 1 160 17 view .LVU72
+ 403 000a FFF7FEFF 		bl	IOE_Read
+ 404              	.LVL28:
+ 162:common/Src/sx8650.c ****                 return 0;
+ 405              		.loc 1 162 9 is_stmt 1 view .LVU73
+ 162:common/Src/sx8650.c ****                 return 0;
+ 406              		.loc 1 162 12 is_stmt 0 view .LVU74
+ 407 000e 10F0800F 		tst	r0, #128
+ 408 0012 35D0     		beq	.L22
+ 166:common/Src/sx8650.c **** 
+ 409              		.loc 1 166 16 view .LVU75
+ 410 0014 0024     		movs	r4, #0
+ 156:common/Src/sx8650.c ****         uint8_t i;
+ 411              		.loc 1 156 18 view .LVU76
+ARM GAS  /tmp/cccOmdGm.s 			page 13
+
+
+ 412 0016 2646     		mov	r6, r4
+ 155:common/Src/sx8650.c ****         uint16_t y = 0;
+ 413              		.loc 1 155 18 view .LVU77
+ 414 0018 2746     		mov	r7, r4
+ 415 001a 10E0     		b	.L19
+ 416              	.LVL29:
+ 417              	.L26:
+ 175:common/Src/sx8650.c ****                         y += ((data[2] & 0x0F) << 8) | (data[3] & 0xFF);
+ 418              		.loc 1 175 25 is_stmt 1 view .LVU78
+ 175:common/Src/sx8650.c ****                         y += ((data[2] & 0x0F) << 8) | (data[3] & 0xFF);
+ 419              		.loc 1 175 27 is_stmt 0 view .LVU79
+ 420 001c 1744     		add	r7, r7, r2
+ 421              	.LVL30:
+ 175:common/Src/sx8650.c ****                         y += ((data[2] & 0x0F) << 8) | (data[3] & 0xFF);
+ 422              		.loc 1 175 27 view .LVU80
+ 423 001e BFB2     		uxth	r7, r7
+ 424              	.LVL31:
+ 176:common/Src/sx8650.c ****                 }
+ 425              		.loc 1 176 25 is_stmt 1 view .LVU81
+ 176:common/Src/sx8650.c ****                 }
+ 426              		.loc 1 176 36 is_stmt 0 view .LVU82
+ 427 0020 9DF80630 		ldrb	r3, [sp, #6]	@ zero_extendqisi2
+ 176:common/Src/sx8650.c ****                 }
+ 428              		.loc 1 176 48 view .LVU83
+ 429 0024 1B02     		lsls	r3, r3, #8
+ 430 0026 03F47063 		and	r3, r3, #3840
+ 176:common/Src/sx8650.c ****                 }
+ 431              		.loc 1 176 61 view .LVU84
+ 432 002a 9DF80720 		ldrb	r2, [sp, #7]	@ zero_extendqisi2
+ 176:common/Src/sx8650.c ****                 }
+ 433              		.loc 1 176 54 view .LVU85
+ 434 002e 1343     		orrs	r3, r3, r2
+ 176:common/Src/sx8650.c ****                 }
+ 435              		.loc 1 176 27 view .LVU86
+ 436 0030 1E44     		add	r6, r6, r3
+ 437              	.LVL32:
+ 176:common/Src/sx8650.c ****                 }
+ 438              		.loc 1 176 27 view .LVU87
+ 439 0032 B6B2     		uxth	r6, r6
+ 440              	.LVL33:
+ 441              	.L20:
+ 180:common/Src/sx8650.c ****         }
+ 442              		.loc 1 180 17 is_stmt 1 discriminator 2 view .LVU88
+ 443 0034 0520     		movs	r0, #5
+ 444 0036 FFF7FEFF 		bl	IOE_Delay
+ 445              	.LVL34:
+ 166:common/Src/sx8650.c **** 
+ 446              		.loc 1 166 28 discriminator 2 view .LVU89
+ 166:common/Src/sx8650.c **** 
+ 447              		.loc 1 166 29 is_stmt 0 discriminator 2 view .LVU90
+ 448 003a 0134     		adds	r4, r4, #1
+ 449              	.LVL35:
+ 166:common/Src/sx8650.c **** 
+ 450              		.loc 1 166 29 discriminator 2 view .LVU91
+ 451 003c E4B2     		uxtb	r4, r4
+ 452              	.LVL36:
+ 453              	.L19:
+ARM GAS  /tmp/cccOmdGm.s 			page 14
+
+
+ 166:common/Src/sx8650.c **** 
+ 454              		.loc 1 166 21 is_stmt 1 discriminator 1 view .LVU92
+ 166:common/Src/sx8650.c **** 
+ 455              		.loc 1 166 9 is_stmt 0 discriminator 1 view .LVU93
+ 456 003e 042C     		cmp	r4, #4
+ 457 0040 15D8     		bhi	.L25
+ 168:common/Src/sx8650.c **** 
+ 458              		.loc 1 168 17 is_stmt 1 view .LVU94
+ 459 0042 0423     		movs	r3, #4
+ 460 0044 0DEB0302 		add	r2, sp, r3
+ 461 0048 9021     		movs	r1, #144
+ 462 004a 2846     		mov	r0, r5
+ 463 004c FFF7FEFF 		bl	IOE_ReadMultiple
+ 464              	.LVL37:
+ 170:common/Src/sx8650.c ****                         return 0;
+ 465              		.loc 1 170 17 view .LVU95
+ 170:common/Src/sx8650.c ****                         return 0;
+ 466              		.loc 1 170 28 is_stmt 0 view .LVU96
+ 467 0050 9DF80430 		ldrb	r3, [sp, #4]	@ zero_extendqisi2
+ 170:common/Src/sx8650.c ****                         return 0;
+ 468              		.loc 1 170 40 view .LVU97
+ 469 0054 1B02     		lsls	r3, r3, #8
+ 470 0056 03F47062 		and	r2, r3, #3840
+ 170:common/Src/sx8650.c ****                         return 0;
+ 471              		.loc 1 170 53 view .LVU98
+ 472 005a 9DF80510 		ldrb	r1, [sp, #5]	@ zero_extendqisi2
+ 170:common/Src/sx8650.c ****                         return 0;
+ 473              		.loc 1 170 46 view .LVU99
+ 474 005e 0A43     		orrs	r2, r2, r1
+ 170:common/Src/sx8650.c ****                         return 0;
+ 475              		.loc 1 170 20 view .LVU100
+ 476 0060 40F6FF70 		movw	r0, #4095
+ 477 0064 8242     		cmp	r2, r0
+ 478 0066 0DD0     		beq	.L23
+ 174:common/Src/sx8650.c ****                         x += ((data[0] & 0x0F) << 8) | (data[1] & 0xFF);
+ 479              		.loc 1 174 17 is_stmt 1 view .LVU101
+ 174:common/Src/sx8650.c ****                         x += ((data[0] & 0x0F) << 8) | (data[1] & 0xFF);
+ 480              		.loc 1 174 20 is_stmt 0 view .LVU102
+ 481 0068 022C     		cmp	r4, #2
+ 482 006a E3D9     		bls	.L20
+ 483 006c D6E7     		b	.L26
+ 484              	.L25:
+ 183:common/Src/sx8650.c ****         touch_y = y / 2;
+ 485              		.loc 1 183 9 is_stmt 1 view .LVU103
+ 183:common/Src/sx8650.c ****         touch_y = y / 2;
+ 486              		.loc 1 183 17 is_stmt 0 view .LVU104
+ 487 006e 7F08     		lsrs	r7, r7, #1
+ 488              	.LVL38:
+ 183:common/Src/sx8650.c ****         touch_y = y / 2;
+ 489              		.loc 1 183 17 view .LVU105
+ 490 0070 054B     		ldr	r3, .L27
+ 491 0072 1F80     		strh	r7, [r3]	@ movhi
+ 184:common/Src/sx8650.c **** 
+ 492              		.loc 1 184 9 is_stmt 1 view .LVU106
+ 184:common/Src/sx8650.c **** 
+ 493              		.loc 1 184 17 is_stmt 0 view .LVU107
+ 494 0074 7608     		lsrs	r6, r6, #1
+ARM GAS  /tmp/cccOmdGm.s 			page 15
+
+
+ 495              	.LVL39:
+ 184:common/Src/sx8650.c **** 
+ 496              		.loc 1 184 17 view .LVU108
+ 497 0076 054B     		ldr	r3, .L27+4
+ 498 0078 1E80     		strh	r6, [r3]	@ movhi
+ 186:common/Src/sx8650.c **** }
+ 499              		.loc 1 186 9 is_stmt 1 view .LVU109
+ 186:common/Src/sx8650.c **** }
+ 500              		.loc 1 186 16 is_stmt 0 view .LVU110
+ 501 007a 0120     		movs	r0, #1
+ 502              	.LVL40:
+ 503              	.L18:
+ 187:common/Src/sx8650.c **** 
+ 504              		.loc 1 187 1 view .LVU111
+ 505 007c 03B0     		add	sp, sp, #12
+ 506              	.LCFI11:
+ 507              		.cfi_remember_state
+ 508              		.cfi_def_cfa_offset 20
+ 509              		@ sp needed
+ 510 007e F0BD     		pop	{r4, r5, r6, r7, pc}
+ 511              	.LVL41:
+ 512              	.L22:
+ 513              	.LCFI12:
+ 514              		.cfi_restore_state
+ 163:common/Src/sx8650.c ****         }
+ 515              		.loc 1 163 24 view .LVU112
+ 516 0080 0020     		movs	r0, #0
+ 517              	.LVL42:
+ 163:common/Src/sx8650.c ****         }
+ 518              		.loc 1 163 24 view .LVU113
+ 519 0082 FBE7     		b	.L18
+ 520              	.LVL43:
+ 521              	.L23:
+ 171:common/Src/sx8650.c **** 
+ 522              		.loc 1 171 32 view .LVU114
+ 523 0084 0020     		movs	r0, #0
+ 524 0086 F9E7     		b	.L18
+ 525              	.L28:
+ 526              		.align	2
+ 527              	.L27:
+ 528 0088 00000000 		.word	.LANCHOR0
+ 529 008c 00000000 		.word	.LANCHOR1
+ 530              		.cfi_endproc
+ 531              	.LFE7:
+ 533              		.global	sx8650_ts_drv
+ 534              		.section	.bss.touch_x,"aw",%nobits
+ 535              		.align	1
+ 536              		.set	.LANCHOR0,. + 0
+ 539              	touch_x:
+ 540 0000 0000     		.space	2
+ 541              		.section	.bss.touch_y,"aw",%nobits
+ 542              		.align	1
+ 543              		.set	.LANCHOR1,. + 0
+ 546              	touch_y:
+ 547 0000 0000     		.space	2
+ 548              		.section	.data.sx8650_ts_drv,"aw"
+ 549              		.align	2
+ARM GAS  /tmp/cccOmdGm.s 			page 16
+
+
+ 552              	sx8650_ts_drv:
+ 553 0000 00000000 		.word	sx8650_Init
+ 554 0004 00000000 		.word	sx8650_ReadID
+ 555 0008 00000000 		.word	sx8650_Reset
+ 556 000c 00000000 		.word	sx8650_TS_Start
+ 557 0010 00000000 		.word	sx8650_TS_DetectTouch
+ 558 0014 00000000 		.word	sx8650_TS_GetXY
+ 559 0018 00000000 		.word	sx8650_TS_EnableIT
+ 560 001c 00000000 		.word	sx8650_TS_ClearIT
+ 561 0020 00000000 		.word	sx8650_TS_ITStatus
+ 562 0024 00000000 		.word	sx8650_TS_DisableIT
+ 563              		.text
+ 564              	.Letext0:
+ 565              		.file 2 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-ea
+ 566              		.file 3 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-ea
+ 567              		.file 4 "common/Inc/sx8650.h"
+ 568              		.file 5 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-ea
+ 569              		.file 6 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-ea
+ 570              		.file 7 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-ea
+ 571              		.file 8 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-ea
+ARM GAS  /tmp/cccOmdGm.s 			page 17
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 sx8650.c
+     /tmp/cccOmdGm.s:17     .text.sx8650_ReadID:0000000000000000 $t
+     /tmp/cccOmdGm.s:25     .text.sx8650_ReadID:0000000000000000 sx8650_ReadID
+     /tmp/cccOmdGm.s:44     .text.sx8650_TS_GetXY:0000000000000000 $t
+     /tmp/cccOmdGm.s:51     .text.sx8650_TS_GetXY:0000000000000000 sx8650_TS_GetXY
+     /tmp/cccOmdGm.s:74     .text.sx8650_TS_GetXY:0000000000000010 $d
+     /tmp/cccOmdGm.s:80     .text.sx8650_TS_EnableIT:0000000000000000 $t
+     /tmp/cccOmdGm.s:87     .text.sx8650_TS_EnableIT:0000000000000000 sx8650_TS_EnableIT
+     /tmp/cccOmdGm.s:101    .text.sx8650_TS_DisableIT:0000000000000000 $t
+     /tmp/cccOmdGm.s:108    .text.sx8650_TS_DisableIT:0000000000000000 sx8650_TS_DisableIT
+     /tmp/cccOmdGm.s:122    .text.sx8650_Init:0000000000000000 $t
+     /tmp/cccOmdGm.s:129    .text.sx8650_Init:0000000000000000 sx8650_Init
+     /tmp/cccOmdGm.s:151    .text.sx8650_Reset:0000000000000000 $t
+     /tmp/cccOmdGm.s:158    .text.sx8650_Reset:0000000000000000 sx8650_Reset
+     /tmp/cccOmdGm.s:197    .text.sx8650_TS_Start:0000000000000000 $t
+     /tmp/cccOmdGm.s:204    .text.sx8650_TS_Start:0000000000000000 sx8650_TS_Start
+     /tmp/cccOmdGm.s:289    .text.sx8650_TS_ITStatus:0000000000000000 $t
+     /tmp/cccOmdGm.s:296    .text.sx8650_TS_ITStatus:0000000000000000 sx8650_TS_ITStatus
+     /tmp/cccOmdGm.s:326    .text.sx8650_TS_ClearIT:0000000000000000 $t
+     /tmp/cccOmdGm.s:333    .text.sx8650_TS_ClearIT:0000000000000000 sx8650_TS_ClearIT
+     /tmp/cccOmdGm.s:362    .text.sx8650_TS_DetectTouch:0000000000000000 $t
+     /tmp/cccOmdGm.s:369    .text.sx8650_TS_DetectTouch:0000000000000000 sx8650_TS_DetectTouch
+     /tmp/cccOmdGm.s:528    .text.sx8650_TS_DetectTouch:0000000000000088 $d
+     /tmp/cccOmdGm.s:552    .data.sx8650_ts_drv:0000000000000000 sx8650_ts_drv
+     /tmp/cccOmdGm.s:535    .bss.touch_x:0000000000000000 $d
+     /tmp/cccOmdGm.s:539    .bss.touch_x:0000000000000000 touch_x
+     /tmp/cccOmdGm.s:542    .bss.touch_y:0000000000000000 $d
+     /tmp/cccOmdGm.s:546    .bss.touch_y:0000000000000000 touch_y
+     /tmp/cccOmdGm.s:549    .data.sx8650_ts_drv:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+IOE_Init
+IOE_WriteMultiple
+IOE_Read
+IOE_Delay
+IOE_ReadMultiple

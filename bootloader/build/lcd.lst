@@ -1,0 +1,3147 @@
+ARM GAS  /tmp/ccOQTxoW.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.eabi_attribute 28, 1
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 1
+  10              		.eabi_attribute 34, 1
+  11              		.eabi_attribute 18, 4
+  12              		.file	"lcd.c"
+  13              		.text
+  14              	.Ltext0:
+  15              		.cfi_sections	.debug_frame
+  16              		.section	.text.BSP_LCD_GetXSize,"ax",%progbits
+  17              		.align	1
+  18              		.arch armv7e-m
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  22              		.fpu fpv5-d16
+  24              	BSP_LCD_GetXSize:
+  25              	.LFB145:
+  26              		.file 1 "common/Src/lcd.c"
+   1:common/Src/lcd.c **** #include <stdio.h>
+   2:common/Src/lcd.c **** #include "main.h"
+   3:common/Src/lcd.c **** #include "lcd.h"
+   4:common/Src/lcd.c **** #include "fonts.h"
+   5:common/Src/lcd.c **** #include "font24.c"
+   6:common/Src/lcd.c **** #include "sdram.h"
+   7:common/Src/lcd.c **** 
+   8:common/Src/lcd.c **** extern LTDC_HandleTypeDef hltdc;
+   9:common/Src/lcd.c **** 
+  10:common/Src/lcd.c **** static LCD_DrawPropTypeDef DrawProp;
+  11:common/Src/lcd.c **** 
+  12:common/Src/lcd.c **** uint16_t lcd_buff[400*272];
+  13:common/Src/lcd.c **** 
+  14:common/Src/lcd.c **** void config_lcd_layer(void)
+  15:common/Src/lcd.c **** {
+  16:common/Src/lcd.c ****         LTDC_LayerCfgTypeDef pLayerCfg = {0};
+  17:common/Src/lcd.c ****         pLayerCfg.WindowX0 = 0;
+  18:common/Src/lcd.c ****         pLayerCfg.WindowX1 = 800;
+  19:common/Src/lcd.c ****         pLayerCfg.WindowY0 = 0;
+  20:common/Src/lcd.c ****         pLayerCfg.WindowY1 = 480;
+  21:common/Src/lcd.c ****         pLayerCfg.PixelFormat = LTDC_PIXEL_FORMAT_RGB565;
+  22:common/Src/lcd.c ****         pLayerCfg.Alpha = 255;
+  23:common/Src/lcd.c ****         pLayerCfg.Alpha0 = 0;
+  24:common/Src/lcd.c ****         pLayerCfg.BlendingFactor1 = LTDC_BLENDING_FACTOR1_CA;
+  25:common/Src/lcd.c ****         pLayerCfg.BlendingFactor2 = LTDC_BLENDING_FACTOR2_CA;
+  26:common/Src/lcd.c ****         pLayerCfg.FBStartAdress = SDRAM_BANK_START;
+  27:common/Src/lcd.c ****         pLayerCfg.ImageWidth = 800;
+  28:common/Src/lcd.c ****         pLayerCfg.ImageHeight = 480;
+  29:common/Src/lcd.c ****         pLayerCfg.Backcolor.Blue = 0;
+  30:common/Src/lcd.c ****         pLayerCfg.Backcolor.Green = 0;
+  31:common/Src/lcd.c ****         pLayerCfg.Backcolor.Red = 0;
+  32:common/Src/lcd.c **** 
+ARM GAS  /tmp/ccOQTxoW.s 			page 2
+
+
+  33:common/Src/lcd.c ****         if (HAL_LTDC_ConfigLayer(&hltdc, &pLayerCfg, 0) != HAL_OK) {
+  34:common/Src/lcd.c ****                 Error_Handler();
+  35:common/Src/lcd.c ****         }
+  36:common/Src/lcd.c **** 
+  37:common/Src/lcd.c **** 	DrawProp.BackColor = LCD_COLOR_WHITE;
+  38:common/Src/lcd.c ****   	DrawProp.pFont     = &Font24;
+  39:common/Src/lcd.c ****   	DrawProp.TextColor = LCD_COLOR_BLACK;
+  40:common/Src/lcd.c **** }
+  41:common/Src/lcd.c **** 
+  42:common/Src/lcd.c **** static uint32_t BSP_LCD_GetXSize(void)
+  43:common/Src/lcd.c **** {
+  27              		.loc 1 43 1 view -0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		@ link register save eliminated.
+  44:common/Src/lcd.c ****   	return hltdc.LayerCfg->ImageWidth;
+  32              		.loc 1 44 4 view .LVU1
+  45:common/Src/lcd.c **** }
+  33              		.loc 1 45 1 is_stmt 0 view .LVU2
+  34 0000 014B     		ldr	r3, .L2
+  35 0002 186E     		ldr	r0, [r3, #96]
+  36 0004 7047     		bx	lr
+  37              	.L3:
+  38 0006 00BF     		.align	2
+  39              	.L2:
+  40 0008 00000000 		.word	hltdc
+  41              		.cfi_endproc
+  42              	.LFE145:
+  44              		.section	.text.BSP_LCD_DrawPixel,"ax",%progbits
+  45              		.align	1
+  46              		.syntax unified
+  47              		.thumb
+  48              		.thumb_func
+  49              		.fpu fpv5-d16
+  51              	BSP_LCD_DrawPixel:
+  52              	.LVL0:
+  53              	.LFB147:
+  46:common/Src/lcd.c **** 
+  47:common/Src/lcd.c **** static uint32_t BSP_LCD_GetYSize(void)
+  48:common/Src/lcd.c **** {
+  49:common/Src/lcd.c ****   	return hltdc.LayerCfg->ImageHeight;
+  50:common/Src/lcd.c **** }
+  51:common/Src/lcd.c **** 
+  52:common/Src/lcd.c **** static void BSP_LCD_DrawPixel(uint16_t Xpos, uint16_t Ypos, uint32_t RGB_Code)
+  53:common/Src/lcd.c **** {
+  54              		.loc 1 53 1 is_stmt 1 view -0
+  55              		.cfi_startproc
+  56              		@ args = 0, pretend = 0, frame = 0
+  57              		@ frame_needed = 0, uses_anonymous_args = 0
+  58              		.loc 1 53 1 is_stmt 0 view .LVU4
+  59 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+  60              	.LCFI0:
+  61              		.cfi_def_cfa_offset 24
+  62              		.cfi_offset 3, -24
+  63              		.cfi_offset 4, -20
+  64              		.cfi_offset 5, -16
+ARM GAS  /tmp/ccOQTxoW.s 			page 3
+
+
+  65              		.cfi_offset 6, -12
+  66              		.cfi_offset 7, -8
+  67              		.cfi_offset 14, -4
+  68 0002 0646     		mov	r6, r0
+  69 0004 0C46     		mov	r4, r1
+  70 0006 1546     		mov	r5, r2
+  54:common/Src/lcd.c ****   	*(__IO uint32_t*) (hltdc.LayerCfg->FBStartAdress + (4*(Ypos*BSP_LCD_GetXSize() + Xpos))) = RGB_C
+  71              		.loc 1 54 4 is_stmt 1 view .LVU5
+  72              		.loc 1 54 37 is_stmt 0 view .LVU6
+  73 0008 044B     		ldr	r3, .L6
+  74 000a DF6D     		ldr	r7, [r3, #92]
+  75              		.loc 1 54 64 view .LVU7
+  76 000c FFF7FEFF 		bl	BSP_LCD_GetXSize
+  77              	.LVL1:
+  78              		.loc 1 54 83 view .LVU8
+  79 0010 00FB0460 		mla	r0, r0, r4, r6
+  80              		.loc 1 54 93 view .LVU9
+  81 0014 47F82050 		str	r5, [r7, r0, lsl #2]
+  55:common/Src/lcd.c **** }
+  82              		.loc 1 55 1 view .LVU10
+  83 0018 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+  84              	.LVL2:
+  85              	.L7:
+  86              		.loc 1 55 1 view .LVU11
+  87 001a 00BF     		.align	2
+  88              	.L6:
+  89 001c 00000000 		.word	hltdc
+  90              		.cfi_endproc
+  91              	.LFE147:
+  93              		.section	.text.DrawChar,"ax",%progbits
+  94              		.align	1
+  95              		.syntax unified
+  96              		.thumb
+  97              		.thumb_func
+  98              		.fpu fpv5-d16
+ 100              	DrawChar:
+ 101              	.LVL3:
+ 102              	.LFB148:
+  56:common/Src/lcd.c **** 
+  57:common/Src/lcd.c **** static void DrawChar(uint16_t Xpos, uint16_t Ypos, const uint8_t *c)
+  58:common/Src/lcd.c **** {
+ 103              		.loc 1 58 1 is_stmt 1 view -0
+ 104              		.cfi_startproc
+ 105              		@ args = 0, pretend = 0, frame = 8
+ 106              		@ frame_needed = 0, uses_anonymous_args = 0
+ 107              		.loc 1 58 1 is_stmt 0 view .LVU13
+ 108 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 109              	.LCFI1:
+ 110              		.cfi_def_cfa_offset 36
+ 111              		.cfi_offset 4, -36
+ 112              		.cfi_offset 5, -32
+ 113              		.cfi_offset 6, -28
+ 114              		.cfi_offset 7, -24
+ 115              		.cfi_offset 8, -20
+ 116              		.cfi_offset 9, -16
+ 117              		.cfi_offset 10, -12
+ 118              		.cfi_offset 11, -8
+ARM GAS  /tmp/ccOQTxoW.s 			page 4
+
+
+ 119              		.cfi_offset 14, -4
+ 120 0004 83B0     		sub	sp, sp, #12
+ 121              	.LCFI2:
+ 122              		.cfi_def_cfa_offset 48
+ 123 0006 8146     		mov	r9, r0
+ 124 0008 0E46     		mov	r6, r1
+ 125 000a 0092     		str	r2, [sp]
+  59:common/Src/lcd.c ****   uint32_t i = 0, j = 0;
+ 126              		.loc 1 59 3 is_stmt 1 view .LVU14
+ 127              	.LVL4:
+  60:common/Src/lcd.c ****   uint16_t height, width;
+ 128              		.loc 1 60 3 view .LVU15
+  61:common/Src/lcd.c ****   uint8_t  offset;
+ 129              		.loc 1 61 3 view .LVU16
+  62:common/Src/lcd.c ****   uint8_t  *pchar;
+ 130              		.loc 1 62 3 view .LVU17
+  63:common/Src/lcd.c ****   uint32_t line;
+ 131              		.loc 1 63 3 view .LVU18
+  64:common/Src/lcd.c **** 
+  65:common/Src/lcd.c ****   height = DrawProp.pFont->Height;
+ 132              		.loc 1 65 3 view .LVU19
+ 133              		.loc 1 65 20 is_stmt 0 view .LVU20
+ 134 000c 2B4B     		ldr	r3, .L24
+ 135 000e 9B68     		ldr	r3, [r3, #8]
+ 136              		.loc 1 65 10 view .LVU21
+ 137 0010 DA88     		ldrh	r2, [r3, #6]
+ 138              	.LVL5:
+ 139              		.loc 1 65 10 view .LVU22
+ 140 0012 0192     		str	r2, [sp, #4]
+ 141              	.LVL6:
+  66:common/Src/lcd.c ****   width  = DrawProp.pFont->Width;
+ 142              		.loc 1 66 3 is_stmt 1 view .LVU23
+ 143              		.loc 1 66 10 is_stmt 0 view .LVU24
+ 144 0014 9D88     		ldrh	r5, [r3, #4]
+ 145              	.LVL7:
+  67:common/Src/lcd.c **** 
+  68:common/Src/lcd.c ****   offset =  8 *((width + 7)/8) -  width ;
+ 146              		.loc 1 68 3 is_stmt 1 view .LVU25
+ 147              		.loc 1 68 28 is_stmt 0 view .LVU26
+ 148 0016 05F1070B 		add	fp, r5, #7
+ 149 001a 4FEAEB0B 		asr	fp, fp, #3
+ 150              		.loc 1 68 32 view .LVU27
+ 151 001e 4FEACB08 		lsl	r8, fp, #3
+ 152 0022 5FFA88F8 		uxtb	r8, r8
+ 153 0026 EBB2     		uxtb	r3, r5
+ 154              		.loc 1 68 10 view .LVU28
+ 155 0028 A8EB0308 		sub	r8, r8, r3
+ 156 002c 5FFA88F8 		uxtb	r8, r8
+ 157              	.LVL8:
+  69:common/Src/lcd.c **** 
+  70:common/Src/lcd.c ****   for(i = 0; i < height; i++)
+ 158              		.loc 1 70 3 is_stmt 1 view .LVU29
+ 159              		.loc 1 70 9 is_stmt 0 view .LVU30
+ 160 0030 4FF0000A 		mov	r10, #0
+ 161              		.loc 1 70 3 view .LVU31
+ 162 0034 29E0     		b	.L10
+ 163              	.LVL9:
+ARM GAS  /tmp/ccOQTxoW.s 			page 5
+
+
+ 164              	.L11:
+  71:common/Src/lcd.c ****   {
+  72:common/Src/lcd.c ****     pchar = ((uint8_t *)c + (width + 7)/8 * i);
+  73:common/Src/lcd.c **** 
+  74:common/Src/lcd.c ****     switch(((width + 7)/8))
+  75:common/Src/lcd.c ****     {
+  76:common/Src/lcd.c **** 
+  77:common/Src/lcd.c ****     case 1:
+  78:common/Src/lcd.c ****       line =  pchar[0];
+ 165              		.loc 1 78 7 is_stmt 1 view .LVU32
+ 166              		.loc 1 78 20 is_stmt 0 view .LVU33
+ 167 0036 009A     		ldr	r2, [sp]
+ 168              	.LVL10:
+ 169              		.loc 1 78 20 view .LVU34
+ 170 0038 D75C     		ldrb	r7, [r2, r3]	@ zero_extendqisi2
+ 171              	.LVL11:
+  79:common/Src/lcd.c ****       break;
+ 172              		.loc 1 79 7 is_stmt 1 view .LVU35
+ 173              	.L14:
+  80:common/Src/lcd.c **** 
+  81:common/Src/lcd.c ****     case 2:
+  82:common/Src/lcd.c ****       line =  (pchar[0]<< 8) | pchar[1];
+  83:common/Src/lcd.c ****       break;
+  84:common/Src/lcd.c **** 
+  85:common/Src/lcd.c ****     case 3:
+  86:common/Src/lcd.c ****     default:
+  87:common/Src/lcd.c ****       line =  (pchar[0]<< 16) | (pchar[1]<< 8) | pchar[2];
+  88:common/Src/lcd.c ****       break;
+  89:common/Src/lcd.c ****     }
+  90:common/Src/lcd.c **** 
+  91:common/Src/lcd.c ****     for (j = 0; j < width; j++)
+ 174              		.loc 1 91 5 view .LVU36
+ 175              		.loc 1 91 12 is_stmt 0 view .LVU37
+ 176 003a 0024     		movs	r4, #0
+ 177              		.loc 1 91 5 view .LVU38
+ 178 003c 0EE0     		b	.L15
+ 179              	.LVL12:
+ 180              	.L12:
+  82:common/Src/lcd.c ****       break;
+ 181              		.loc 1 82 7 is_stmt 1 view .LVU39
+  82:common/Src/lcd.c ****       break;
+ 182              		.loc 1 82 21 is_stmt 0 view .LVU40
+ 183 003e 0099     		ldr	r1, [sp]
+ 184 0040 CB5C     		ldrb	r3, [r1, r3]	@ zero_extendqisi2
+  82:common/Src/lcd.c ****       break;
+ 185              		.loc 1 82 37 view .LVU41
+ 186 0042 5778     		ldrb	r7, [r2, #1]	@ zero_extendqisi2
+  82:common/Src/lcd.c ****       break;
+ 187              		.loc 1 82 30 view .LVU42
+ 188 0044 47EA0327 		orr	r7, r7, r3, lsl #8
+ 189              	.LVL13:
+  83:common/Src/lcd.c **** 
+ 190              		.loc 1 83 7 is_stmt 1 view .LVU43
+ 191 0048 F7E7     		b	.L14
+ 192              	.LVL14:
+ 193              	.L16:
+  92:common/Src/lcd.c ****     {
+ARM GAS  /tmp/ccOQTxoW.s 			page 6
+
+
+  93:common/Src/lcd.c ****       if(line & (1 << (width- j + offset- 1)))
+  94:common/Src/lcd.c ****       {
+  95:common/Src/lcd.c ****         BSP_LCD_DrawPixel((Xpos + j), Ypos, DrawProp.TextColor);
+  96:common/Src/lcd.c ****       }
+  97:common/Src/lcd.c ****       else
+  98:common/Src/lcd.c ****       {
+  99:common/Src/lcd.c ****         BSP_LCD_DrawPixel((Xpos + j), Ypos, DrawProp.BackColor);
+ 194              		.loc 1 99 9 view .LVU44
+ 195 004a 09EB0400 		add	r0, r9, r4
+ 196 004e 1B4B     		ldr	r3, .L24
+ 197 0050 5A68     		ldr	r2, [r3, #4]
+ 198 0052 3146     		mov	r1, r6
+ 199 0054 80B2     		uxth	r0, r0
+ 200 0056 FFF7FEFF 		bl	BSP_LCD_DrawPixel
+ 201              	.LVL15:
+ 202              	.L17:
+  91:common/Src/lcd.c ****     {
+ 203              		.loc 1 91 28 discriminator 2 view .LVU45
+  91:common/Src/lcd.c ****     {
+ 204              		.loc 1 91 29 is_stmt 0 discriminator 2 view .LVU46
+ 205 005a 0134     		adds	r4, r4, #1
+ 206              	.LVL16:
+ 207              	.L15:
+  91:common/Src/lcd.c ****     {
+ 208              		.loc 1 91 17 is_stmt 1 discriminator 1 view .LVU47
+  91:common/Src/lcd.c ****     {
+ 209              		.loc 1 91 5 is_stmt 0 discriminator 1 view .LVU48
+ 210 005c A542     		cmp	r5, r4
+ 211 005e 10D9     		bls	.L22
+  93:common/Src/lcd.c ****       {
+ 212              		.loc 1 93 7 is_stmt 1 view .LVU49
+  93:common/Src/lcd.c ****       {
+ 213              		.loc 1 93 29 is_stmt 0 view .LVU50
+ 214 0060 2B1B     		subs	r3, r5, r4
+  93:common/Src/lcd.c ****       {
+ 215              		.loc 1 93 33 view .LVU51
+ 216 0062 4344     		add	r3, r3, r8
+  93:common/Src/lcd.c ****       {
+ 217              		.loc 1 93 41 view .LVU52
+ 218 0064 013B     		subs	r3, r3, #1
+  93:common/Src/lcd.c ****       {
+ 219              		.loc 1 93 20 view .LVU53
+ 220 0066 0122     		movs	r2, #1
+ 221 0068 02FA03F3 		lsl	r3, r2, r3
+  93:common/Src/lcd.c ****       {
+ 222              		.loc 1 93 9 view .LVU54
+ 223 006c 3B42     		tst	r3, r7
+ 224 006e ECD0     		beq	.L16
+  95:common/Src/lcd.c ****       }
+ 225              		.loc 1 95 9 is_stmt 1 view .LVU55
+ 226 0070 09EB0400 		add	r0, r9, r4
+ 227 0074 114B     		ldr	r3, .L24
+ 228 0076 1A68     		ldr	r2, [r3]
+ 229 0078 3146     		mov	r1, r6
+ 230 007a 80B2     		uxth	r0, r0
+ 231 007c FFF7FEFF 		bl	BSP_LCD_DrawPixel
+ 232              	.LVL17:
+ARM GAS  /tmp/ccOQTxoW.s 			page 7
+
+
+ 233 0080 EBE7     		b	.L17
+ 234              	.L22:
+ 100:common/Src/lcd.c ****       }
+ 101:common/Src/lcd.c ****     }
+ 102:common/Src/lcd.c ****     Ypos++;
+ 235              		.loc 1 102 5 discriminator 2 view .LVU56
+ 236              		.loc 1 102 9 is_stmt 0 discriminator 2 view .LVU57
+ 237 0082 0136     		adds	r6, r6, #1
+ 238              	.LVL18:
+ 239              		.loc 1 102 9 discriminator 2 view .LVU58
+ 240 0084 B6B2     		uxth	r6, r6
+ 241              	.LVL19:
+  70:common/Src/lcd.c ****   {
+ 242              		.loc 1 70 26 is_stmt 1 discriminator 2 view .LVU59
+  70:common/Src/lcd.c ****   {
+ 243              		.loc 1 70 27 is_stmt 0 discriminator 2 view .LVU60
+ 244 0086 0AF1010A 		add	r10, r10, #1
+ 245              	.LVL20:
+ 246              	.L10:
+  70:common/Src/lcd.c ****   {
+ 247              		.loc 1 70 14 is_stmt 1 discriminator 1 view .LVU61
+  70:common/Src/lcd.c ****   {
+ 248              		.loc 1 70 3 is_stmt 0 discriminator 1 view .LVU62
+ 249 008a 019B     		ldr	r3, [sp, #4]
+ 250 008c 5345     		cmp	r3, r10
+ 251 008e 12D9     		bls	.L23
+  72:common/Src/lcd.c **** 
+ 252              		.loc 1 72 5 is_stmt 1 view .LVU63
+  72:common/Src/lcd.c **** 
+ 253              		.loc 1 72 43 is_stmt 0 view .LVU64
+ 254 0090 0AFB0BF3 		mul	r3, r10, fp
+  72:common/Src/lcd.c **** 
+ 255              		.loc 1 72 11 view .LVU65
+ 256 0094 009A     		ldr	r2, [sp]
+ 257 0096 1A44     		add	r2, r2, r3
+ 258              	.LVL21:
+  74:common/Src/lcd.c ****     {
+ 259              		.loc 1 74 5 is_stmt 1 view .LVU66
+ 260 0098 BBF1010F 		cmp	fp, #1
+ 261 009c CBD0     		beq	.L11
+ 262 009e BBF1020F 		cmp	fp, #2
+ 263 00a2 CCD0     		beq	.L12
+  87:common/Src/lcd.c ****       break;
+ 264              		.loc 1 87 7 view .LVU67
+  87:common/Src/lcd.c ****       break;
+ 265              		.loc 1 87 21 is_stmt 0 view .LVU68
+ 266 00a4 0099     		ldr	r1, [sp]
+ 267 00a6 CB5C     		ldrb	r3, [r1, r3]	@ zero_extendqisi2
+  87:common/Src/lcd.c ****       break;
+ 268              		.loc 1 87 39 view .LVU69
+ 269 00a8 5778     		ldrb	r7, [r2, #1]	@ zero_extendqisi2
+  87:common/Src/lcd.c ****       break;
+ 270              		.loc 1 87 42 view .LVU70
+ 271 00aa 3F02     		lsls	r7, r7, #8
+  87:common/Src/lcd.c ****       break;
+ 272              		.loc 1 87 31 view .LVU71
+ 273 00ac 47EA0347 		orr	r7, r7, r3, lsl #16
+ARM GAS  /tmp/ccOQTxoW.s 			page 8
+
+
+  87:common/Src/lcd.c ****       break;
+ 274              		.loc 1 87 55 view .LVU72
+ 275 00b0 9378     		ldrb	r3, [r2, #2]	@ zero_extendqisi2
+  87:common/Src/lcd.c ****       break;
+ 276              		.loc 1 87 48 view .LVU73
+ 277 00b2 1F43     		orrs	r7, r7, r3
+ 278              	.LVL22:
+  88:common/Src/lcd.c ****     }
+ 279              		.loc 1 88 7 is_stmt 1 view .LVU74
+ 280 00b4 C1E7     		b	.L14
+ 281              	.LVL23:
+ 282              	.L23:
+ 103:common/Src/lcd.c ****   }
+ 104:common/Src/lcd.c **** }
+ 283              		.loc 1 104 1 is_stmt 0 view .LVU75
+ 284 00b6 03B0     		add	sp, sp, #12
+ 285              	.LCFI3:
+ 286              		.cfi_def_cfa_offset 36
+ 287              	.LVL24:
+ 288              		.loc 1 104 1 view .LVU76
+ 289              		@ sp needed
+ 290 00b8 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 291              	.LVL25:
+ 292              	.L25:
+ 293              		.loc 1 104 1 view .LVU77
+ 294              		.align	2
+ 295              	.L24:
+ 296 00bc 00000000 		.word	.LANCHOR0
+ 297              		.cfi_endproc
+ 298              	.LFE148:
+ 300              		.section	.text.BSP_LCD_DisplayChar,"ax",%progbits
+ 301              		.align	1
+ 302              		.syntax unified
+ 303              		.thumb
+ 304              		.thumb_func
+ 305              		.fpu fpv5-d16
+ 307              	BSP_LCD_DisplayChar:
+ 308              	.LVL26:
+ 309              	.LFB149:
+ 105:common/Src/lcd.c **** 
+ 106:common/Src/lcd.c **** static void BSP_LCD_DisplayChar(uint16_t Xpos, uint16_t Ypos, uint8_t Ascii)
+ 107:common/Src/lcd.c **** {
+ 310              		.loc 1 107 1 is_stmt 1 view -0
+ 311              		.cfi_startproc
+ 312              		@ args = 0, pretend = 0, frame = 0
+ 313              		@ frame_needed = 0, uses_anonymous_args = 0
+ 314              		.loc 1 107 1 is_stmt 0 view .LVU79
+ 315 0000 38B5     		push	{r3, r4, r5, lr}
+ 316              	.LCFI4:
+ 317              		.cfi_def_cfa_offset 16
+ 318              		.cfi_offset 3, -16
+ 319              		.cfi_offset 4, -12
+ 320              		.cfi_offset 5, -8
+ 321              		.cfi_offset 14, -4
+ 108:common/Src/lcd.c ****   DrawChar(Xpos, Ypos, &DrawProp.pFont->table[(Ascii-' ') *\
+ 322              		.loc 1 108 3 is_stmt 1 view .LVU80
+ 323              		.loc 1 108 33 is_stmt 0 view .LVU81
+ARM GAS  /tmp/ccOQTxoW.s 			page 9
+
+
+ 324 0002 074B     		ldr	r3, .L29
+ 325 0004 9C68     		ldr	r4, [r3, #8]
+ 326              		.loc 1 108 39 view .LVU82
+ 327 0006 2568     		ldr	r5, [r4]
+ 328              		.loc 1 108 53 view .LVU83
+ 329 0008 203A     		subs	r2, r2, #32
+ 330              	.LVL27:
+ 109:common/Src/lcd.c ****     DrawProp.pFont->Height * ((DrawProp.pFont->Width + 7) / 8)]);
+ 331              		.loc 1 109 19 view .LVU84
+ 332 000a E388     		ldrh	r3, [r4, #6]
+ 108:common/Src/lcd.c ****   DrawChar(Xpos, Ypos, &DrawProp.pFont->table[(Ascii-' ') *\
+ 333              		.loc 1 108 59 view .LVU85
+ 334 000c 03FB02F2 		mul	r2, r3, r2
+ 335              		.loc 1 109 46 view .LVU86
+ 336 0010 A388     		ldrh	r3, [r4, #4]
+ 337              		.loc 1 109 59 view .LVU87
+ 338 0012 0733     		adds	r3, r3, #7
+ 339 0014 DB10     		asrs	r3, r3, #3
+ 108:common/Src/lcd.c ****   DrawChar(Xpos, Ypos, &DrawProp.pFont->table[(Ascii-' ') *\
+ 340              		.loc 1 108 3 view .LVU88
+ 341 0016 03FB0252 		mla	r2, r3, r2, r5
+ 342 001a FFF7FEFF 		bl	DrawChar
+ 343              	.LVL28:
+ 110:common/Src/lcd.c **** }
+ 344              		.loc 1 110 1 view .LVU89
+ 345 001e 38BD     		pop	{r3, r4, r5, pc}
+ 346              	.L30:
+ 347              		.align	2
+ 348              	.L29:
+ 349 0020 00000000 		.word	.LANCHOR0
+ 350              		.cfi_endproc
+ 351              	.LFE149:
+ 353              		.section	.text.config_lcd_layer,"ax",%progbits
+ 354              		.align	1
+ 355              		.global	config_lcd_layer
+ 356              		.syntax unified
+ 357              		.thumb
+ 358              		.thumb_func
+ 359              		.fpu fpv5-d16
+ 361              	config_lcd_layer:
+ 362              	.LFB144:
+  15:common/Src/lcd.c ****         LTDC_LayerCfgTypeDef pLayerCfg = {0};
+ 363              		.loc 1 15 1 is_stmt 1 view -0
+ 364              		.cfi_startproc
+ 365              		@ args = 0, pretend = 0, frame = 56
+ 366              		@ frame_needed = 0, uses_anonymous_args = 0
+ 367 0000 00B5     		push	{lr}
+ 368              	.LCFI5:
+ 369              		.cfi_def_cfa_offset 4
+ 370              		.cfi_offset 14, -4
+ 371 0002 8FB0     		sub	sp, sp, #60
+ 372              	.LCFI6:
+ 373              		.cfi_def_cfa_offset 64
+  16:common/Src/lcd.c ****         pLayerCfg.WindowX0 = 0;
+ 374              		.loc 1 16 9 view .LVU91
+  16:common/Src/lcd.c ****         pLayerCfg.WindowX0 = 0;
+ 375              		.loc 1 16 30 is_stmt 0 view .LVU92
+ARM GAS  /tmp/ccOQTxoW.s 			page 10
+
+
+ 376 0004 0022     		movs	r2, #0
+ 377 0006 8DF83720 		strb	r2, [sp, #55]
+  17:common/Src/lcd.c ****         pLayerCfg.WindowX1 = 800;
+ 378              		.loc 1 17 9 is_stmt 1 view .LVU93
+  17:common/Src/lcd.c ****         pLayerCfg.WindowX1 = 800;
+ 379              		.loc 1 17 28 is_stmt 0 view .LVU94
+ 380 000a 0192     		str	r2, [sp, #4]
+  18:common/Src/lcd.c ****         pLayerCfg.WindowY0 = 0;
+ 381              		.loc 1 18 9 is_stmt 1 view .LVU95
+  18:common/Src/lcd.c ****         pLayerCfg.WindowY0 = 0;
+ 382              		.loc 1 18 28 is_stmt 0 view .LVU96
+ 383 000c 4FF44871 		mov	r1, #800
+ 384 0010 0291     		str	r1, [sp, #8]
+  19:common/Src/lcd.c ****         pLayerCfg.WindowY1 = 480;
+ 385              		.loc 1 19 9 is_stmt 1 view .LVU97
+  19:common/Src/lcd.c ****         pLayerCfg.WindowY1 = 480;
+ 386              		.loc 1 19 28 is_stmt 0 view .LVU98
+ 387 0012 0392     		str	r2, [sp, #12]
+  20:common/Src/lcd.c ****         pLayerCfg.PixelFormat = LTDC_PIXEL_FORMAT_RGB565;
+ 388              		.loc 1 20 9 is_stmt 1 view .LVU99
+  20:common/Src/lcd.c ****         pLayerCfg.PixelFormat = LTDC_PIXEL_FORMAT_RGB565;
+ 389              		.loc 1 20 28 is_stmt 0 view .LVU100
+ 390 0014 4FF4F073 		mov	r3, #480
+ 391 0018 0493     		str	r3, [sp, #16]
+  21:common/Src/lcd.c ****         pLayerCfg.Alpha = 255;
+ 392              		.loc 1 21 9 is_stmt 1 view .LVU101
+  21:common/Src/lcd.c ****         pLayerCfg.Alpha = 255;
+ 393              		.loc 1 21 31 is_stmt 0 view .LVU102
+ 394 001a 0220     		movs	r0, #2
+ 395 001c 0590     		str	r0, [sp, #20]
+  22:common/Src/lcd.c ****         pLayerCfg.Alpha0 = 0;
+ 396              		.loc 1 22 9 is_stmt 1 view .LVU103
+  22:common/Src/lcd.c ****         pLayerCfg.Alpha0 = 0;
+ 397              		.loc 1 22 25 is_stmt 0 view .LVU104
+ 398 001e FF20     		movs	r0, #255
+ 399 0020 0690     		str	r0, [sp, #24]
+  23:common/Src/lcd.c ****         pLayerCfg.BlendingFactor1 = LTDC_BLENDING_FACTOR1_CA;
+ 400              		.loc 1 23 9 is_stmt 1 view .LVU105
+  23:common/Src/lcd.c ****         pLayerCfg.BlendingFactor1 = LTDC_BLENDING_FACTOR1_CA;
+ 401              		.loc 1 23 26 is_stmt 0 view .LVU106
+ 402 0022 0792     		str	r2, [sp, #28]
+  24:common/Src/lcd.c ****         pLayerCfg.BlendingFactor2 = LTDC_BLENDING_FACTOR2_CA;
+ 403              		.loc 1 24 9 is_stmt 1 view .LVU107
+  24:common/Src/lcd.c ****         pLayerCfg.BlendingFactor2 = LTDC_BLENDING_FACTOR2_CA;
+ 404              		.loc 1 24 35 is_stmt 0 view .LVU108
+ 405 0024 4FF48060 		mov	r0, #1024
+ 406 0028 0890     		str	r0, [sp, #32]
+  25:common/Src/lcd.c ****         pLayerCfg.FBStartAdress = SDRAM_BANK_START;
+ 407              		.loc 1 25 9 is_stmt 1 view .LVU109
+  25:common/Src/lcd.c ****         pLayerCfg.FBStartAdress = SDRAM_BANK_START;
+ 408              		.loc 1 25 35 is_stmt 0 view .LVU110
+ 409 002a 0520     		movs	r0, #5
+ 410 002c 0990     		str	r0, [sp, #36]
+  26:common/Src/lcd.c ****         pLayerCfg.ImageWidth = 800;
+ 411              		.loc 1 26 9 is_stmt 1 view .LVU111
+  26:common/Src/lcd.c ****         pLayerCfg.ImageWidth = 800;
+ 412              		.loc 1 26 33 is_stmt 0 view .LVU112
+ARM GAS  /tmp/ccOQTxoW.s 			page 11
+
+
+ 413 002e 4FF04040 		mov	r0, #-1073741824
+ 414 0032 0A90     		str	r0, [sp, #40]
+  27:common/Src/lcd.c ****         pLayerCfg.ImageHeight = 480;
+ 415              		.loc 1 27 9 is_stmt 1 view .LVU113
+  27:common/Src/lcd.c ****         pLayerCfg.ImageHeight = 480;
+ 416              		.loc 1 27 30 is_stmt 0 view .LVU114
+ 417 0034 0B91     		str	r1, [sp, #44]
+  28:common/Src/lcd.c ****         pLayerCfg.Backcolor.Blue = 0;
+ 418              		.loc 1 28 9 is_stmt 1 view .LVU115
+  28:common/Src/lcd.c ****         pLayerCfg.Backcolor.Blue = 0;
+ 419              		.loc 1 28 31 is_stmt 0 view .LVU116
+ 420 0036 0C93     		str	r3, [sp, #48]
+  29:common/Src/lcd.c ****         pLayerCfg.Backcolor.Green = 0;
+ 421              		.loc 1 29 9 is_stmt 1 view .LVU117
+  29:common/Src/lcd.c ****         pLayerCfg.Backcolor.Green = 0;
+ 422              		.loc 1 29 34 is_stmt 0 view .LVU118
+ 423 0038 8DF83420 		strb	r2, [sp, #52]
+  30:common/Src/lcd.c ****         pLayerCfg.Backcolor.Red = 0;
+ 424              		.loc 1 30 9 is_stmt 1 view .LVU119
+  30:common/Src/lcd.c ****         pLayerCfg.Backcolor.Red = 0;
+ 425              		.loc 1 30 35 is_stmt 0 view .LVU120
+ 426 003c 8DF83520 		strb	r2, [sp, #53]
+  31:common/Src/lcd.c **** 
+ 427              		.loc 1 31 9 is_stmt 1 view .LVU121
+  31:common/Src/lcd.c **** 
+ 428              		.loc 1 31 33 is_stmt 0 view .LVU122
+ 429 0040 8DF83620 		strb	r2, [sp, #54]
+  33:common/Src/lcd.c ****                 Error_Handler();
+ 430              		.loc 1 33 9 is_stmt 1 view .LVU123
+  33:common/Src/lcd.c ****                 Error_Handler();
+ 431              		.loc 1 33 13 is_stmt 0 view .LVU124
+ 432 0044 01A9     		add	r1, sp, #4
+ 433 0046 0948     		ldr	r0, .L35
+ 434 0048 FFF7FEFF 		bl	HAL_LTDC_ConfigLayer
+ 435              	.LVL29:
+  33:common/Src/lcd.c ****                 Error_Handler();
+ 436              		.loc 1 33 12 view .LVU125
+ 437 004c 58B9     		cbnz	r0, .L34
+ 438              	.L32:
+  37:common/Src/lcd.c ****   	DrawProp.pFont     = &Font24;
+ 439              		.loc 1 37 2 is_stmt 1 view .LVU126
+  37:common/Src/lcd.c ****   	DrawProp.pFont     = &Font24;
+ 440              		.loc 1 37 21 is_stmt 0 view .LVU127
+ 441 004e 084B     		ldr	r3, .L35+4
+ 442 0050 4FF0FF32 		mov	r2, #-1
+ 443 0054 5A60     		str	r2, [r3, #4]
+  38:common/Src/lcd.c ****   	DrawProp.TextColor = LCD_COLOR_BLACK;
+ 444              		.loc 1 38 4 is_stmt 1 view .LVU128
+  38:common/Src/lcd.c ****   	DrawProp.TextColor = LCD_COLOR_BLACK;
+ 445              		.loc 1 38 23 is_stmt 0 view .LVU129
+ 446 0056 074A     		ldr	r2, .L35+8
+ 447 0058 9A60     		str	r2, [r3, #8]
+  39:common/Src/lcd.c **** }
+ 448              		.loc 1 39 4 is_stmt 1 view .LVU130
+  39:common/Src/lcd.c **** }
+ 449              		.loc 1 39 23 is_stmt 0 view .LVU131
+ 450 005a 4FF07F42 		mov	r2, #-16777216
+ARM GAS  /tmp/ccOQTxoW.s 			page 12
+
+
+ 451 005e 1A60     		str	r2, [r3]
+  40:common/Src/lcd.c **** 
+ 452              		.loc 1 40 1 view .LVU132
+ 453 0060 0FB0     		add	sp, sp, #60
+ 454              	.LCFI7:
+ 455              		.cfi_remember_state
+ 456              		.cfi_def_cfa_offset 4
+ 457              		@ sp needed
+ 458 0062 5DF804FB 		ldr	pc, [sp], #4
+ 459              	.L34:
+ 460              	.LCFI8:
+ 461              		.cfi_restore_state
+  34:common/Src/lcd.c ****         }
+ 462              		.loc 1 34 17 is_stmt 1 view .LVU133
+ 463 0066 FFF7FEFF 		bl	Error_Handler
+ 464              	.LVL30:
+ 465 006a F0E7     		b	.L32
+ 466              	.L36:
+ 467              		.align	2
+ 468              	.L35:
+ 469 006c 00000000 		.word	hltdc
+ 470 0070 00000000 		.word	.LANCHOR0
+ 471 0074 00000000 		.word	.LANCHOR1
+ 472              		.cfi_endproc
+ 473              	.LFE144:
+ 475              		.section	.text.BSP_LCD_DisplayStringAt,"ax",%progbits
+ 476              		.align	1
+ 477              		.global	BSP_LCD_DisplayStringAt
+ 478              		.syntax unified
+ 479              		.thumb
+ 480              		.thumb_func
+ 481              		.fpu fpv5-d16
+ 483              	BSP_LCD_DisplayStringAt:
+ 484              	.LVL31:
+ 485              	.LFB150:
+ 111:common/Src/lcd.c **** 
+ 112:common/Src/lcd.c **** void BSP_LCD_DisplayStringAt(uint16_t Xpos, uint16_t Ypos, uint8_t *Text, Text_AlignModeTypdef Mode
+ 113:common/Src/lcd.c **** {
+ 486              		.loc 1 113 1 view -0
+ 487              		.cfi_startproc
+ 488              		@ args = 0, pretend = 0, frame = 0
+ 489              		@ frame_needed = 0, uses_anonymous_args = 0
+ 490              		.loc 1 113 1 is_stmt 0 view .LVU135
+ 491 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 492              	.LCFI9:
+ 493              		.cfi_def_cfa_offset 24
+ 494              		.cfi_offset 4, -24
+ 495              		.cfi_offset 5, -20
+ 496              		.cfi_offset 6, -16
+ 497              		.cfi_offset 7, -12
+ 498              		.cfi_offset 8, -8
+ 499              		.cfi_offset 14, -4
+ 500 0004 0546     		mov	r5, r0
+ 501 0006 8846     		mov	r8, r1
+ 502 0008 1646     		mov	r6, r2
+ 503 000a 1F46     		mov	r7, r3
+ 114:common/Src/lcd.c ****   uint16_t refcolumn = 1, i = 0;
+ARM GAS  /tmp/ccOQTxoW.s 			page 13
+
+
+ 504              		.loc 1 114 3 is_stmt 1 view .LVU136
+ 505              	.LVL32:
+ 115:common/Src/lcd.c ****   uint32_t size = 0, xsize = 0;
+ 506              		.loc 1 115 3 view .LVU137
+ 116:common/Src/lcd.c ****   uint8_t  *ptr = Text;
+ 507              		.loc 1 116 3 view .LVU138
+ 117:common/Src/lcd.c **** 
+ 118:common/Src/lcd.c ****   while (*ptr++) size ++ ;
+ 508              		.loc 1 118 3 view .LVU139
+ 115:common/Src/lcd.c ****   uint8_t  *ptr = Text;
+ 509              		.loc 1 115 12 is_stmt 0 view .LVU140
+ 510 000c 0024     		movs	r4, #0
+ 511              	.LVL33:
+ 512              	.L38:
+ 513              		.loc 1 118 9 is_stmt 1 discriminator 1 view .LVU141
+ 514              		.loc 1 118 10 is_stmt 0 discriminator 1 view .LVU142
+ 515 000e 12F8011B 		ldrb	r1, [r2], #1	@ zero_extendqisi2
+ 516              	.LVL34:
+ 517              		.loc 1 118 9 discriminator 1 view .LVU143
+ 518 0012 09B1     		cbz	r1, .L49
+ 519              		.loc 1 118 18 is_stmt 1 discriminator 2 view .LVU144
+ 520              		.loc 1 118 23 is_stmt 0 discriminator 2 view .LVU145
+ 521 0014 0134     		adds	r4, r4, #1
+ 522              	.LVL35:
+ 523              		.loc 1 118 23 discriminator 2 view .LVU146
+ 524 0016 FAE7     		b	.L38
+ 525              	.L49:
+ 119:common/Src/lcd.c **** 
+ 120:common/Src/lcd.c ****   xsize = (BSP_LCD_GetXSize()/DrawProp.pFont->Width);
+ 526              		.loc 1 120 3 is_stmt 1 view .LVU147
+ 527              		.loc 1 120 12 is_stmt 0 view .LVU148
+ 528 0018 FFF7FEFF 		bl	BSP_LCD_GetXSize
+ 529              	.LVL36:
+ 530              		.loc 1 120 39 view .LVU149
+ 531 001c 1F4B     		ldr	r3, .L52
+ 532 001e 9B68     		ldr	r3, [r3, #8]
+ 533              		.loc 1 120 45 view .LVU150
+ 534 0020 9B88     		ldrh	r3, [r3, #4]
+ 535              		.loc 1 120 9 view .LVU151
+ 536 0022 B0FBF3F0 		udiv	r0, r0, r3
+ 537              	.LVL37:
+ 121:common/Src/lcd.c **** 
+ 122:common/Src/lcd.c ****   switch (Mode)
+ 538              		.loc 1 122 3 is_stmt 1 view .LVU152
+ 539 0026 012F     		cmp	r7, #1
+ 540 0028 24D0     		beq	.L40
+ 541 002a 022F     		cmp	r7, #2
+ 542 002c 2AD0     		beq	.L41
+ 543              	.LVL38:
+ 544              	.L42:
+ 123:common/Src/lcd.c ****   {
+ 124:common/Src/lcd.c ****   case CENTER_MODE:
+ 125:common/Src/lcd.c ****     {
+ 126:common/Src/lcd.c ****       refcolumn = Xpos + ((xsize - size)* DrawProp.pFont->Width) / 2;
+ 127:common/Src/lcd.c ****       break;
+ 128:common/Src/lcd.c ****     }
+ 129:common/Src/lcd.c ****   case LEFT_MODE:
+ARM GAS  /tmp/ccOQTxoW.s 			page 14
+
+
+ 130:common/Src/lcd.c ****     {
+ 131:common/Src/lcd.c ****       refcolumn = Xpos;
+ 132:common/Src/lcd.c ****       break;
+ 133:common/Src/lcd.c ****     }
+ 134:common/Src/lcd.c ****   case RIGHT_MODE:
+ 135:common/Src/lcd.c ****     {
+ 136:common/Src/lcd.c ****       refcolumn = - Xpos + ((xsize - size)*DrawProp.pFont->Width);
+ 137:common/Src/lcd.c ****       break;
+ 138:common/Src/lcd.c ****     }
+ 139:common/Src/lcd.c ****   default:
+ 140:common/Src/lcd.c ****     {
+ 141:common/Src/lcd.c ****       refcolumn = Xpos;
+ 142:common/Src/lcd.c ****       break;
+ 143:common/Src/lcd.c ****     }
+ 144:common/Src/lcd.c ****   }
+ 145:common/Src/lcd.c **** 
+ 146:common/Src/lcd.c ****   if ((refcolumn < 1) || (refcolumn >= 0x8000))
+ 545              		.loc 1 146 3 view .LVU153
+ 546              		.loc 1 146 23 is_stmt 0 view .LVU154
+ 547 002e 2BB2     		sxth	r3, r5
+ 548              		.loc 1 146 6 view .LVU155
+ 549 0030 002B     		cmp	r3, #0
+ 550 0032 2EDD     		ble	.L50
+ 551              	.LVL39:
+ 552              	.L43:
+ 147:common/Src/lcd.c ****   {
+ 148:common/Src/lcd.c ****     refcolumn = 1;
+ 553              		.loc 1 148 15 view .LVU156
+ 554 0034 0024     		movs	r4, #0
+ 555              	.LVL40:
+ 556              	.L45:
+ 149:common/Src/lcd.c ****   }
+ 150:common/Src/lcd.c **** 
+ 151:common/Src/lcd.c ****   while ((*Text != 0) & (((BSP_LCD_GetXSize() - (i*DrawProp.pFont->Width)) & 0xFFFF) >= DrawProp.pF
+ 557              		.loc 1 151 9 is_stmt 1 view .LVU157
+ 558              		.loc 1 151 11 is_stmt 0 view .LVU158
+ 559 0036 3778     		ldrb	r7, [r6]	@ zero_extendqisi2
+ 560              		.loc 1 151 28 view .LVU159
+ 561 0038 FFF7FEFF 		bl	BSP_LCD_GetXSize
+ 562              	.LVL41:
+ 563              		.loc 1 151 60 view .LVU160
+ 564 003c 174B     		ldr	r3, .L52
+ 565 003e 9B68     		ldr	r3, [r3, #8]
+ 566              		.loc 1 151 66 view .LVU161
+ 567 0040 9A88     		ldrh	r2, [r3, #4]
+ 568              		.loc 1 151 47 view .LVU162
+ 569 0042 02FB1403 		mls	r3, r2, r4, r0
+ 570              		.loc 1 151 76 view .LVU163
+ 571 0046 9BB2     		uxth	r3, r3
+ 572              		.loc 1 151 23 view .LVU164
+ 573 0048 9342     		cmp	r3, r2
+ 574 004a 34BF     		ite	cc
+ 575 004c 0023     		movcc	r3, #0
+ 576 004e 0123     		movcs	r3, #1
+ 577 0050 002F     		cmp	r7, #0
+ 578 0052 08BF     		it	eq
+ 579 0054 0023     		moveq	r3, #0
+ARM GAS  /tmp/ccOQTxoW.s 			page 15
+
+
+ 580              		.loc 1 151 9 view .LVU165
+ 581 0056 F3B1     		cbz	r3, .L51
+ 152:common/Src/lcd.c ****   {
+ 153:common/Src/lcd.c ****     BSP_LCD_DisplayChar(refcolumn, Ypos, *Text);
+ 582              		.loc 1 153 5 is_stmt 1 view .LVU166
+ 583 0058 3A46     		mov	r2, r7
+ 584 005a 4146     		mov	r1, r8
+ 585 005c 2846     		mov	r0, r5
+ 586 005e FFF7FEFF 		bl	BSP_LCD_DisplayChar
+ 587              	.LVL42:
+ 154:common/Src/lcd.c ****     refcolumn += DrawProp.pFont->Width;
+ 588              		.loc 1 154 5 view .LVU167
+ 589              		.loc 1 154 26 is_stmt 0 view .LVU168
+ 590 0062 0E4B     		ldr	r3, .L52
+ 591 0064 9B68     		ldr	r3, [r3, #8]
+ 592              		.loc 1 154 32 view .LVU169
+ 593 0066 9888     		ldrh	r0, [r3, #4]
+ 594              		.loc 1 154 15 view .LVU170
+ 595 0068 0544     		add	r5, r5, r0
+ 596              	.LVL43:
+ 597              		.loc 1 154 15 view .LVU171
+ 598 006a ADB2     		uxth	r5, r5
+ 599              	.LVL44:
+ 155:common/Src/lcd.c **** 
+ 156:common/Src/lcd.c ****     Text++;
+ 600              		.loc 1 156 5 is_stmt 1 view .LVU172
+ 601              		.loc 1 156 9 is_stmt 0 view .LVU173
+ 602 006c 0136     		adds	r6, r6, #1
+ 603              	.LVL45:
+ 157:common/Src/lcd.c ****     i++;
+ 604              		.loc 1 157 5 is_stmt 1 view .LVU174
+ 605              		.loc 1 157 6 is_stmt 0 view .LVU175
+ 606 006e 0134     		adds	r4, r4, #1
+ 607              	.LVL46:
+ 608              		.loc 1 157 6 view .LVU176
+ 609 0070 A4B2     		uxth	r4, r4
+ 610              	.LVL47:
+ 611              		.loc 1 157 6 view .LVU177
+ 612 0072 E0E7     		b	.L45
+ 613              	.LVL48:
+ 614              	.L40:
+ 126:common/Src/lcd.c ****       break;
+ 615              		.loc 1 126 7 is_stmt 1 view .LVU178
+ 126:common/Src/lcd.c ****       break;
+ 616              		.loc 1 126 34 is_stmt 0 view .LVU179
+ 617 0074 001B     		subs	r0, r0, r4
+ 618              	.LVL49:
+ 126:common/Src/lcd.c ****       break;
+ 619              		.loc 1 126 41 view .LVU180
+ 620 0076 00FB03F3 		mul	r3, r0, r3
+ 126:common/Src/lcd.c ****       break;
+ 621              		.loc 1 126 24 view .LVU181
+ 622 007a C3F34F03 		ubfx	r3, r3, #1, #16
+ 126:common/Src/lcd.c ****       break;
+ 623              		.loc 1 126 17 view .LVU182
+ 624 007e 1D44     		add	r5, r5, r3
+ 625 0080 ADB2     		uxth	r5, r5
+ARM GAS  /tmp/ccOQTxoW.s 			page 16
+
+
+ 626              	.LVL50:
+ 127:common/Src/lcd.c ****     }
+ 627              		.loc 1 127 7 is_stmt 1 view .LVU183
+ 628 0082 D4E7     		b	.L42
+ 629              	.LVL51:
+ 630              	.L41:
+ 136:common/Src/lcd.c ****       break;
+ 631              		.loc 1 136 7 view .LVU184
+ 136:common/Src/lcd.c ****       break;
+ 632              		.loc 1 136 36 is_stmt 0 view .LVU185
+ 633 0084 001B     		subs	r0, r0, r4
+ 634              	.LVL52:
+ 136:common/Src/lcd.c ****       break;
+ 635              		.loc 1 136 26 view .LVU186
+ 636 0086 10FB03F3 		smulbb	r3, r0, r3
+ 637 008a 9BB2     		uxth	r3, r3
+ 136:common/Src/lcd.c ****       break;
+ 638              		.loc 1 136 17 view .LVU187
+ 639 008c 5D1B     		subs	r5, r3, r5
+ 640 008e ADB2     		uxth	r5, r5
+ 641              	.LVL53:
+ 137:common/Src/lcd.c ****     }
+ 642              		.loc 1 137 7 is_stmt 1 view .LVU188
+ 643 0090 CDE7     		b	.L42
+ 644              	.L50:
+ 148:common/Src/lcd.c ****   }
+ 645              		.loc 1 148 15 is_stmt 0 view .LVU189
+ 646 0092 0125     		movs	r5, #1
+ 647              	.LVL54:
+ 148:common/Src/lcd.c ****   }
+ 648              		.loc 1 148 15 view .LVU190
+ 649 0094 CEE7     		b	.L43
+ 650              	.LVL55:
+ 651              	.L51:
+ 158:common/Src/lcd.c ****   }
+ 159:common/Src/lcd.c **** }
+ 652              		.loc 1 159 1 view .LVU191
+ 653 0096 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 654              	.LVL56:
+ 655              	.L53:
+ 656              		.loc 1 159 1 view .LVU192
+ 657 009a 00BF     		.align	2
+ 658              	.L52:
+ 659 009c 00000000 		.word	.LANCHOR0
+ 660              		.cfi_endproc
+ 661              	.LFE150:
+ 663              		.comm	lcd_buff,217600,4
+ 664              		.global	Font24
+ 665              		.global	Font24_Table
+ 666              		.section	.bss.DrawProp,"aw",%nobits
+ 667              		.align	2
+ 668              		.set	.LANCHOR0,. + 0
+ 671              	DrawProp:
+ 672 0000 00000000 		.space	12
+ 672      00000000 
+ 672      00000000 
+ 673              		.section	.data.Font24,"aw"
+ARM GAS  /tmp/ccOQTxoW.s 			page 17
+
+
+ 674              		.align	2
+ 675              		.set	.LANCHOR1,. + 0
+ 678              	Font24:
+ 679 0000 00000000 		.word	Font24_Table
+ 680 0004 1100     		.short	17
+ 681 0006 1800     		.short	24
+ 682              		.section	.rodata.Font24_Table,"a"
+ 683              		.align	2
+ 686              	Font24_Table:
+ 687 0000 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 687      00000000 
+ 687      00000000 
+ 687      00
+ 688 000d 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 688      00000000 
+ 688      00000000 
+ 688      00
+ 689 001a 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 689      00000000 
+ 689      00000000 
+ 689      00
+ 690 0027 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 690      00000000 
+ 690      00000000 
+ 690      00
+ 691 0034 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 691      00000000 
+ 691      00000000 
+ 691      00
+ 692 0041 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 692      00000000 
+ 692      00000000 
+ 692      00
+ 693 004e 03800003 		.ascii	"\003\200\000\003\200\000\003\200\000\003\200\000\003"
+ 693      80000380 
+ 693      00038000 
+ 693      03
+ 694 005b 80000380 		.ascii	"\200\000\003\200\000\003\200\000\003\200\000\003\200"
+ 694      00038000 
+ 694      03800003 
+ 694      80
+ 695 0068 00010000 		.ascii	"\000\001\000\000\001\000\000\000\000\000\000\000\000"
+ 695      01000000 
+ 695      00000000 
+ 695      00
+ 696 0075 03800003 		.ascii	"\003\200\000\003\200\000\000\000\000\000\000\000\000"
+ 696      80000000 
+ 696      00000000 
+ 696      00
+ 697 0082 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 697      00000000 
+ 697      00000000 
+ 697      00
+ 698 008f 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\016p\000\016"
+ 698      00000000 
+ 698      00000E70 
+ 698      000E
+ARM GAS  /tmp/ccOQTxoW.s 			page 18
+
+
+ 699 009d 70000E70 		.ascii	"p\000\016p\000\004 \000\004 \000\004 \000\004 \000\000"
+ 699      00042000 
+ 699      04200004 
+ 699      20000420 
+ 699      0000
+ 700 00af 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 700      00000000 
+ 700      00000000 
+ 700      00
+ 701 00bc 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 701      00000000 
+ 701      00000000 
+ 701      00
+ 702 00c9 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 702      00000000 
+ 702      00000000 
+ 702      00
+ 703 00d6 00000000 		.ascii	"\000\000\000\000\000\000\000\000\006`\000\006`\000\006"
+ 703      00000000 
+ 703      06600006 
+ 703      600006
+ 704 00e5 60000660 		.ascii	"`\000\006`\000\006`\000?\370\000?\370\000\006`\000\014"
+ 704      00066000 
+ 704      3FF8003F 
+ 704      F8000660 
+ 704      000C
+ 705 00f7 C0003FF8 		.ascii	"\300\000?\370\000?\370\000\014\300\000\014\300\000\014"
+ 705      003FF800 
+ 705      0CC0000C 
+ 705      C0000C
+ 706 0106 C0000CC0 		.ascii	"\300\000\014\300\000\014\300\000\000\000\000\000\000"
+ 706      000CC000 
+ 706      00000000 
+ 706      00
+ 707 0113 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 707      00000000 
+ 707      00000000 
+ 707      00
+ 708 0120 00000001 		.ascii	"\000\000\000\001\200\000\001\200\000\007\260\000\017"
+ 708      80000180 
+ 708      0007B000 
+ 708      0F
+ 709 012d F0001870 		.ascii	"\360\000\030p\000\030p\000\034\000\000\017\200\000\007"
+ 709      00187000 
+ 709      1C00000F 
+ 709      800007
+ 710 013c E00000F0 		.ascii	"\340\000\000\360\000\0300\000\0340\000\034p\000\037"
+ 710      00183000 
+ 710      1C30001C 
+ 710      70001F
+ 711 014b E0001BC0 		.ascii	"\340\000\033\300\000\001\200\000\001\200\000\001\200"
+ 711      00018000 
+ 711      01800001 
+ 711      80
+ 712 0158 00018000 		.ascii	"\000\001\200\000\000\000\000\000\000\000\000\000\000"
+ 712      00000000 
+ 712      00000000 
+ARM GAS  /tmp/ccOQTxoW.s 			page 19
+
+
+ 712      00
+ 713 0165 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\007\200\000\017"
+ 713      00000000 
+ 713      00078000 
+ 713      0F
+ 714 0172 C0001CE0 		.ascii	"\300\000\034\340\000\030`\000\030`\000\034\340\000\017"
+ 714      00186000 
+ 714      1860001C 
+ 714      E0000F
+ 715 0181 F80007E0 		.ascii	"\370\000\007\340\000\037\360\000\0078\000\006\030\000"
+ 715      001FF000 
+ 715      07380006 
+ 715      1800
+ 716 018f 06180007 		.ascii	"\006\030\000\0078\000\003\360\000\001\340\000\000\000"
+ 716      380003F0 
+ 716      0001E000 
+ 716      0000
+ 717 019d 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 717      00000000 
+ 717      00000000 
+ 717      00
+ 718 01aa 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 718      00000000 
+ 718      00000000 
+ 718      00
+ 719 01b7 00000000 		.ascii	"\000\000\000\000\000\003\360\000\007\360\000\014`\000"
+ 719      0003F000 
+ 719      07F0000C 
+ 719      6000
+ 720 01c5 0C00000C 		.ascii	"\014\000\000\014\000\000\006\000\000\007\000\000\017"
+ 720      00000600 
+ 720      00070000 
+ 720      0F
+ 721 01d2 9C001DFC 		.ascii	"\234\000\035\374\000\030\360\000\030p\000\017\374\000"
+ 721      0018F000 
+ 721      1870000F 
+ 721      FC00
+ 722 01e0 07DC0000 		.ascii	"\007\334\000\000\000\000\000\000\000\000\000\000\000"
+ 722      00000000 
+ 722      00000000 
+ 722      00
+ 723 01ed 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 723      00000000 
+ 723      00000000 
+ 723      00
+ 724 01fa 00000000 		.ascii	"\000\000\000\000\000\000\000\003\200\000\003\200\000"
+ 724      00000003 
+ 724      80000380 
+ 724      00
+ 725 0207 03800001 		.ascii	"\003\200\000\001\000\000\001\000\000\001\000\000\001"
+ 725      00000100 
+ 725      00010000 
+ 725      01
+ 726 0214 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 726      00000000 
+ 726      00000000 
+ 726      00
+ARM GAS  /tmp/ccOQTxoW.s 			page 20
+
+
+ 727 0221 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 727      00000000 
+ 727      00000000 
+ 727      00
+ 728 022e 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 728      00000000 
+ 728      00000000 
+ 728      00
+ 729 023b 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\030"
+ 729      00000000 
+ 729      00000000 
+ 729      18
+ 730 0248 00003800 		.ascii	"\000\0008\000\000p\000\000\360\000\000\340\000\000\340"
+ 730      00700000 
+ 730      F00000E0 
+ 730      0000E0
+ 731 0257 0001C000 		.ascii	"\000\001\300\000\001\300\000\001\300\000\001\300\000"
+ 731      01C00001 
+ 731      C00001C0 
+ 731      00
+ 732 0264 01C00001 		.ascii	"\001\300\000\001\300\000\000\340\000\000\340\000\000"
+ 732      C00000E0 
+ 732      0000E000 
+ 732      00
+ 733 0271 70000070 		.ascii	"p\000\000p\000\0008\000\000\030\000\000\000\000\000"
+ 733      00003800 
+ 733      00180000 
+ 733      000000
+ 734 0280 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 734      00000000 
+ 734      00000000 
+ 734      00
+ 735 028d 00180000 		.ascii	"\000\030\000\000\034\000\000\016\000\000\016\000\000"
+ 735      1C00000E 
+ 735      00000E00 
+ 735      00
+ 736 029a 07000007 		.ascii	"\007\000\000\007\000\000\003\200\000\003\200\000\003"
+ 736      00000380 
+ 736      00038000 
+ 736      03
+ 737 02a7 80000380 		.ascii	"\200\000\003\200\000\003\200\000\003\200\000\007\000"
+ 737      00038000 
+ 737      03800007 
+ 737      00
+ 738 02b4 00070000 		.ascii	"\000\007\000\000\017\000\000\016\000\000\034\000\000"
+ 738      0F00000E 
+ 738      00001C00 
+ 738      00
+ 739 02c1 18000000 		.ascii	"\030\000\000\000\000\000\000\000\000\000\000\000\000"
+ 739      00000000 
+ 739      00000000 
+ 739      00
+ 740 02ce 00000000 		.ascii	"\000\000\000\000\000\000\000\000\001\200\000\001\200"
+ 740      00000000 
+ 740      01800001 
+ 740      80
+ 741 02db 00018000 		.ascii	"\000\001\200\000\035\270\000\037\370\000\007\340\000"
+ARM GAS  /tmp/ccOQTxoW.s 			page 21
+
+
+ 741      1DB8001F 
+ 741      F80007E0 
+ 741      00
+ 742 02e8 03C00003 		.ascii	"\003\300\000\003\300\000\006`\000\006`\000\000\000\000"
+ 742      C0000660 
+ 742      00066000 
+ 742      000000
+ 743 02f7 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 743      00000000 
+ 743      00000000 
+ 743      00
+ 744 0304 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 744      00000000 
+ 744      00000000 
+ 744      00
+ 745 0311 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 745      00000000 
+ 745      00000000 
+ 745      00
+ 746 031e 00000000 		.ascii	"\000\000\000\000\000\000\001\200\000\001\200\000\001"
+ 746      00000180 
+ 746      00018000 
+ 746      01
+ 747 032b 80000180 		.ascii	"\200\000\001\200\000\001\200\000?\374\000?\374\000\001"
+ 747      00018000 
+ 747      3FFC003F 
+ 747      FC0001
+ 748 033a 80000180 		.ascii	"\200\000\001\200\000\001\200\000\001\200\000\001\200"
+ 748      00018000 
+ 748      01800001 
+ 748      80
+ 749 0347 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 749      00000000 
+ 749      00000000 
+ 749      00
+ 750 0354 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 750      00000000 
+ 750      00000000 
+ 750      00
+ 751 0361 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 751      00000000 
+ 751      00000000 
+ 751      00
+ 752 036e 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 752      00000000 
+ 752      00000000 
+ 752      00
+ 753 037b 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 753      00000000 
+ 753      00000000 
+ 753      00
+ 754 0388 000000E0 		.ascii	"\000\000\000\340\000\000\300\000\001\300\000\001\200"
+ 754      0000C000 
+ 754      01C00001 
+ 754      80
+ 755 0395 00018000 		.ascii	"\000\001\200\000\003\000\000\003\000\000\000\000\000"
+ 755      03000003 
+ARM GAS  /tmp/ccOQTxoW.s 			page 22
+
+
+ 755      00000000 
+ 755      00
+ 756 03a2 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 756      00000000 
+ 756      00000000 
+ 756      00
+ 757 03af 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 757      00000000 
+ 757      00000000 
+ 757      00
+ 758 03bc 00000000 		.ascii	"\000\000\000\000\000\000\000\037\370\000\037\370\000"
+ 758      0000001F 
+ 758      F8001FF8 
+ 758      00
+ 759 03c9 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 759      00000000 
+ 759      00000000 
+ 759      00
+ 760 03d6 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 760      00000000 
+ 760      00000000 
+ 760      00
+ 761 03e3 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 761      00000000 
+ 761      00000000 
+ 761      00
+ 762 03f0 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 762      00000000 
+ 762      00000000 
+ 762      00
+ 763 03fd 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 763      00000000 
+ 763      00000000 
+ 763      00
+ 764 040a 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 764      00000000 
+ 764      00000000 
+ 764      00
+ 765 0417 00000003 		.ascii	"\000\000\000\003\300\000\003\300\000\003\300\000\000"
+ 765      C00003C0 
+ 765      0003C000 
+ 765      00
+ 766 0424 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 766      00000000 
+ 766      00000000 
+ 766      00
+ 767 0431 00000000 		.ascii	"\000\000\000\000\000\000\000\000\030\000\000\030\000"
+ 767      00000000 
+ 767      18000018 
+ 767      00
+ 768 043e 00380000 		.ascii	"\0008\000\0000\000\000p\000\000`\000\000`\000\000\300"
+ 768      30000070 
+ 768      00006000 
+ 768      00600000 
+ 768      C0
+ 769 044f 0000C000 		.ascii	"\000\000\300\000\001\200\000\001\200\000\003\000\000"
+ 769      01800001 
+ARM GAS  /tmp/ccOQTxoW.s 			page 23
+
+
+ 769      80000300 
+ 769      00
+ 770 045c 03000006 		.ascii	"\003\000\000\006\000\000\006\000\000\016\000\000\014"
+ 770      00000600 
+ 770      000E0000 
+ 770      0C
+ 771 0469 00001C00 		.ascii	"\000\000\034\000\000\030\000\000\030\000\000\000\000"
+ 771      00180000 
+ 771      18000000 
+ 771      00
+ 772 0476 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 772      00000000 
+ 772      00000000 
+ 772      00
+ 773 0483 00000003 		.ascii	"\000\000\000\003\300\000\007\340\000\0140\000\0140\000"
+ 773      C00007E0 
+ 773      000C3000 
+ 773      0C3000
+ 774 0492 18180018 		.ascii	"\030\030\000\030\030\000\030\030\000\030\030\000\030"
+ 774      18001818 
+ 774      00181800 
+ 774      18
+ 775 049f 18001818 		.ascii	"\030\000\030\030\000\030\030\000\0140\000\0140\000\007"
+ 775      00181800 
+ 775      0C30000C 
+ 775      300007
+ 776 04ae E00003C0 		.ascii	"\340\000\003\300\000\000\000\000\000\000\000\000\000"
+ 776      00000000 
+ 776      00000000 
+ 776      00
+ 777 04bb 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 777      00000000 
+ 777      00000000 
+ 777      00
+ 778 04c8 00000000 		.ascii	"\000\000\000\000\000\000\000\200\000\007\200\000\037"
+ 778      00000080 
+ 778      00078000 
+ 778      1F
+ 779 04d5 80001D80 		.ascii	"\200\000\035\200\000\001\200\000\001\200\000\001\200"
+ 779      00018000 
+ 779      01800001 
+ 779      80
+ 780 04e2 00018000 		.ascii	"\000\001\200\000\001\200\000\001\200\000\001\200\000"
+ 780      01800001 
+ 780      80000180 
+ 780      00
+ 781 04ef 01800001 		.ascii	"\001\200\000\001\200\000\037\370\000\037\370\000\000"
+ 781      80001FF8 
+ 781      001FF800 
+ 781      00
+ 782 04fc 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 782      00000000 
+ 782      00000000 
+ 782      00
+ 783 0509 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 783      00000000 
+ 783      00000000 
+ARM GAS  /tmp/ccOQTxoW.s 			page 24
+
+
+ 783      00
+ 784 0516 07C0001F 		.ascii	"\007\300\000\037\360\00080\0000\030\0000\030\000\000"
+ 784      F0003830 
+ 784      00301800 
+ 784      30180000 
+ 785 0526 18000030 		.ascii	"\030\000\0000\000\000`\000\001\300\000\003\200\000\006"
+ 785      00006000 
+ 785      01C00003 
+ 785      800006
+ 786 0535 00000C00 		.ascii	"\000\000\014\000\000\030\000\000?\370\000?\370\000\000"
+ 786      00180000 
+ 786      3FF8003F 
+ 786      F80000
+ 787 0544 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 787      00000000 
+ 787      00000000 
+ 787      00
+ 788 0551 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 788      00000000 
+ 788      00000000 
+ 788      00
+ 789 055e 03C0000F 		.ascii	"\003\300\000\017\340\000\014p\000\0000\000\0000\000"
+ 789      E0000C70 
+ 789      00003000 
+ 789      003000
+ 790 056d 00600003 		.ascii	"\000`\000\003\300\000\003\340\000\000p\000\000\030\000"
+ 790      C00003E0 
+ 790      00007000 
+ 790      001800
+ 791 057c 00180000 		.ascii	"\000\030\000\000\030\000\0308\000\037\360\000\017\300"
+ 791      18001838 
+ 791      001FF000 
+ 791      0FC0
+ 792 058a 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 792      00000000 
+ 792      00000000 
+ 792      00
+ 793 0597 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 793      00000000 
+ 793      00000000 
+ 793      00
+ 794 05a4 000000E0 		.ascii	"\000\000\000\340\000\001\340\000\001\340\000\003`\000"
+ 794      0001E000 
+ 794      01E00003 
+ 794      6000
+ 795 05b2 06600006 		.ascii	"\006`\000\006`\000\014`\000\014`\000\030`\0000`\000"
+ 795      60000C60 
+ 795      000C6000 
+ 795      18600030 
+ 795      6000
+ 796 05c4 3FF8003F 		.ascii	"?\370\000?\370\000\000`\000\003\370\000\003\370\000"
+ 796      F8000060 
+ 796      0003F800 
+ 796      03F800
+ 797 05d3 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 797      00000000 
+ 797      00000000 
+ARM GAS  /tmp/ccOQTxoW.s 			page 25
+
+
+ 797      00
+ 798 05e0 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 798      00000000 
+ 798      00000000 
+ 798      00
+ 799 05ed 001FF000 		.ascii	"\000\037\360\000\037\360\000\030\000\000\030\000\000"
+ 799      1FF00018 
+ 799      00001800 
+ 799      00
+ 800 05fa 1800001B 		.ascii	"\030\000\000\033\300\000\037\360\000\0340\000\000\030"
+ 800      C0001FF0 
+ 800      001C3000 
+ 800      0018
+ 801 0608 00001800 		.ascii	"\000\000\030\000\000\030\000\000\030\00000\000?\360"
+ 801      00180000 
+ 801      18003030 
+ 801      003FF0
+ 802 0617 000FC000 		.ascii	"\000\017\300\000\000\000\000\000\000\000\000\000\000"
+ 802      00000000 
+ 802      00000000 
+ 802      00
+ 803 0624 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 803      00000000 
+ 803      00000000 
+ 803      00
+ 804 0631 00000000 		.ascii	"\000\000\000\000\000\000\370\000\003\370\000\007\000"
+ 804      0000F800 
+ 804      03F80007 
+ 804      00
+ 805 063e 000E0000 		.ascii	"\000\016\000\000\014\000\000\030\000\000\033\300\000"
+ 805      0C000018 
+ 805      00001BC0 
+ 805      00
+ 806 064b 1FF0001C 		.ascii	"\037\360\000\0340\000\030\030\000\030\030\000\030\030"
+ 806      30001818 
+ 806      00181800 
+ 806      1818
+ 807 0659 000C3800 		.ascii	"\000\0148\000\017\360\000\003\340\000\000\000\000\000"
+ 807      0FF00003 
+ 807      E0000000 
+ 807      0000
+ 808 0667 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 808      00000000 
+ 808      00000000 
+ 808      00
+ 809 0674 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\037\370\000"
+ 809      00000000 
+ 809      00001FF8 
+ 809      00
+ 810 0681 1FF80018 		.ascii	"\037\370\000\030\030\000\0308\000\0000\000\0000\000"
+ 810      18001838 
+ 810      00003000 
+ 810      003000
+ 811 0690 00700000 		.ascii	"\000p\000\000`\000\000`\000\000\340\000\000\300\000"
+ 811      60000060 
+ 811      0000E000 
+ 811      00C000
+ARM GAS  /tmp/ccOQTxoW.s 			page 26
+
+
+ 812 069f 00C00001 		.ascii	"\000\300\000\001\300\000\001\200\000\001\200\000\000"
+ 812      C0000180 
+ 812      00018000 
+ 812      00
+ 813 06ac 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 813      00000000 
+ 813      00000000 
+ 813      00
+ 814 06b9 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 814      00000000 
+ 814      00000000 
+ 814      00
+ 815 06c6 07E0000F 		.ascii	"\007\340\000\017\360\000\0348\000\030\030\000\030\030"
+ 815      F0001C38 
+ 815      00181800 
+ 815      1818
+ 816 06d4 000C3000 		.ascii	"\000\0140\000\007\340\000\007\340\000\0140\000\030\030"
+ 816      07E00007 
+ 816      E0000C30 
+ 816      001818
+ 817 06e3 00181800 		.ascii	"\000\030\030\000\030\030\000\0348\000\017\360\000\007"
+ 817      1818001C 
+ 817      38000FF0 
+ 817      0007
+ 818 06f1 E0000000 		.ascii	"\340\000\000\000\000\000\000\000\000\000\000\000\000"
+ 818      00000000 
+ 818      00000000 
+ 818      00
+ 819 06fe 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 819      00000000 
+ 819      00000000 
+ 819      00
+ 820 070b 00000007 		.ascii	"\000\000\000\007\300\000\017\360\000\0340\000\030\030"
+ 820      C0000FF0 
+ 820      001C3000 
+ 820      1818
+ 821 0719 00181800 		.ascii	"\000\030\030\000\030\030\000\0148\000\017\370\000\003"
+ 821      1818000C 
+ 821      38000FF8 
+ 821      0003
+ 822 0727 D8000018 		.ascii	"\330\000\000\030\000\0000\000\000p\000\000\340\000\037"
+ 822      00003000 
+ 822      00700000 
+ 822      E0001F
+ 823 0736 C0001F00 		.ascii	"\300\000\037\000\000\000\000\000\000\000\000\000\000"
+ 823      00000000 
+ 823      00000000 
+ 823      00
+ 824 0743 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 824      00000000 
+ 824      00000000 
+ 824      00
+ 825 0750 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 825      00000000 
+ 825      00000000 
+ 825      00
+ 826 075d 00000000 		.ascii	"\000\000\000\000\000\003\300\000\003\300\000\003\300"
+ARM GAS  /tmp/ccOQTxoW.s 			page 27
+
+
+ 826      0003C000 
+ 826      03C00003 
+ 826      C0
+ 827 076a 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 827      00000000 
+ 827      00000000 
+ 827      00
+ 828 0777 00000003 		.ascii	"\000\000\000\003\300\000\003\300\000\003\300\000\000"
+ 828      C00003C0 
+ 828      0003C000 
+ 828      00
+ 829 0784 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 829      00000000 
+ 829      00000000 
+ 829      00
+ 830 0791 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 830      00000000 
+ 830      00000000 
+ 830      00
+ 831 079e 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 831      00000000 
+ 831      00000000 
+ 831      00
+ 832 07ab F00000F0 		.ascii	"\360\000\000\360\000\000\360\000\000\000\000\000\000"
+ 832      0000F000 
+ 832      00000000 
+ 832      00
+ 833 07b8 00000000 		.ascii	"\000\000\000\000\000\000\000\000\340\000\001\300\000"
+ 833      00000000 
+ 833      E00001C0 
+ 833      00
+ 834 07c5 01800001 		.ascii	"\001\200\000\001\200\000\003\000\000\002\000"
+ 834      80000300 
+ 834      000200
+ 835 07d0 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 835      00000000 
+ 835      00000000 
+ 835      00
+ 836 07dd 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 836      00000000 
+ 836      00000000 
+ 836      00
+ 837 07ea 0000001C 		.ascii	"\000\000\000\034\000\000<\000\000\360\000\003\300\000"
+ 837      00003C00 
+ 837      00F00003 
+ 837      C000
+ 838 07f8 0F00003C 		.ascii	"\017\000\000<\000\000\360\000\000<\000\000\017\000\000"
+ 838      0000F000 
+ 838      003C0000 
+ 838      0F0000
+ 839 0807 03C00000 		.ascii	"\003\300\000\000\360\000\000<\000\000\034\000\000\000"
+ 839      F000003C 
+ 839      00001C00 
+ 839      0000
+ 840 0815 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 840      00000000 
+ 840      00000000 
+ARM GAS  /tmp/ccOQTxoW.s 			page 28
+
+
+ 840      00
+ 841 0822 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 841      00000000 
+ 841      00000000 
+ 841      00
+ 842 082f 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 842      00000000 
+ 842      00000000 
+ 842      00
+ 843 083c 007FFC00 		.ascii	"\000\177\374\000\177\374\000\000\000\000\000\000\000"
+ 843      7FFC0000 
+ 843      00000000 
+ 843      00
+ 844 0849 7FFC007F 		.ascii	"\177\374\000\177\374\000\000\000\000\000\000\000\000"
+ 844      FC000000 
+ 844      00000000 
+ 844      00
+ 845 0856 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 845      00000000 
+ 845      00000000 
+ 845      00
+ 846 0863 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 846      00000000 
+ 846      00000000 
+ 846      00
+ 847 0870 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000p\000"
+ 847      00000000 
+ 847      00000000 
+ 847      7000
+ 848 087e 00780000 		.ascii	"\000x\000\000\036\000\000\007\200\000\001\340\000\000"
+ 848      1E000007 
+ 848      800001E0 
+ 848      0000
+ 849 088c 7800001E 		.ascii	"x\000\000\036\000\000x\000\001\340\000\007\200\000\036"
+ 849      00007800 
+ 849      01E00007 
+ 849      80001E
+ 850 089b 00007800 		.ascii	"\000\000x\000\000p\000\000\000\000\000\000\000\000\000"
+ 850      00700000 
+ 850      00000000 
+ 850      000000
+ 851 08aa 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 851      00000000 
+ 851      00000000 
+ 851      00
+ 852 08b7 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\007\300\000"
+ 852      00000000 
+ 852      000007C0 
+ 852      00
+ 853 08c4 0FE00018 		.ascii	"\017\340\000\030p\000\0300\000\0300\000\000p\000\000"
+ 853      70001830 
+ 853      00183000 
+ 853      00700000 
+ 854 08d4 E00003C0 		.ascii	"\340\000\003\300\000\003\200\000\003\000\000\000\000"
+ 854      00038000 
+ 854      03000000 
+ 854      00
+ARM GAS  /tmp/ccOQTxoW.s 			page 29
+
+
+ 855 08e1 00000000 		.ascii	"\000\000\000\000\007\000\000\007\000\000\000\000\000"
+ 855      07000007 
+ 855      00000000 
+ 855      00
+ 856 08ee 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 856      00000000 
+ 856      00000000 
+ 856      00
+ 857 08fb 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\003\340"
+ 857      00000000 
+ 857      00000003 
+ 857      E0
+ 858 0908 0007F000 		.ascii	"\000\007\360\000\0168\000\014\030\000\030x\000\030\370"
+ 858      0E38000C 
+ 858      18001878 
+ 858      0018F8
+ 859 0917 0019D800 		.ascii	"\000\031\330\000\031\230\000\031\230\000\031\230\000"
+ 859      19980019 
+ 859      98001998 
+ 859      00
+ 860 0924 18F80018 		.ascii	"\030\370\000\030x\000\030\000\000\014\000\000\016\030"
+ 860      78001800 
+ 860      000C0000 
+ 860      0E18
+ 861 0932 0007F800 		.ascii	"\000\007\370\000\003\340\000\000\000\000\000\000\000"
+ 861      03E00000 
+ 861      00000000 
+ 861      00
+ 862 093f 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 862      00000000 
+ 862      00000000 
+ 862      00
+ 863 094c 00000000 		.ascii	"\000\000\000\000\000\037\200\000\037\300\000\001\300"
+ 863      001F8000 
+ 863      1FC00001 
+ 863      C0
+ 864 0959 00036000 		.ascii	"\000\003`\000\003`\000\0060\000\0060\000\0140\000\017"
+ 864      03600006 
+ 864      30000630 
+ 864      000C3000 
+ 864      0F
+ 865 096a F8001FF8 		.ascii	"\370\000\037\370\000\030\014\0000\014\000\374\177\000"
+ 865      00180C00 
+ 865      300C00FC 
+ 865      7F00
+ 866 0978 FC7F0000 		.ascii	"\374\177\000\000\000\000\000\000\000\000\000\000\000"
+ 866      00000000 
+ 866      00000000 
+ 866      00
+ 867 0985 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 867      00000000 
+ 867      00000000 
+ 867      00
+ 868 0992 00000000 		.ascii	"\000\000\000\000\000\000\000\177\340\000\177\360\000"
+ 868      0000007F 
+ 868      E0007FF0 
+ 868      00
+ARM GAS  /tmp/ccOQTxoW.s 			page 30
+
+
+ 869 099f 18380018 		.ascii	"\0308\000\030\030\000\030\030\000\0308\000\037\360\000"
+ 869      18001818 
+ 869      00183800 
+ 869      1FF000
+ 870 09ae 1FF80018 		.ascii	"\037\370\000\030\034\000\030\014\000\030\014\000\030"
+ 870      1C00180C 
+ 870      00180C00 
+ 870      18
+ 871 09bb 0C007FF8 		.ascii	"\014\000\177\370\000\177\360\000\000\000\000\000\000"
+ 871      007FF000 
+ 871      00000000 
+ 871      00
+ 872 09c8 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 872      00000000 
+ 872      00000000 
+ 872      00
+ 873 09d5 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\003"
+ 873      00000000 
+ 873      00000000 
+ 873      03
+ 874 09e2 EC000FFC 		.ascii	"\354\000\017\374\000\034\034\000\030\014\0000\014\000"
+ 874      001C1C00 
+ 874      180C0030 
+ 874      0C00
+ 875 09f0 30000030 		.ascii	"0\000\0000\000\0000\000\0000\000\0000\000\000\030\014"
+ 875      00003000 
+ 875      00300000 
+ 875      30000018 
+ 875      0C
+ 876 0a01 001C1C00 		.ascii	"\000\034\034\000\017\370\000\003\360\000\000\000\000"
+ 876      0FF80003 
+ 876      F0000000 
+ 876      00
+ 877 0a0e 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 877      00000000 
+ 877      00000000 
+ 877      00
+ 878 0a1b 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 878      00000000 
+ 878      00000000 
+ 878      00
+ 879 0a28 007FC000 		.ascii	"\000\177\300\000\177\360\000\0308\000\030\030\000\030"
+ 879      7FF00018 
+ 879      38001818 
+ 879      0018
+ 880 0a36 0C00180C 		.ascii	"\014\000\030\014\000\030\014\000\030\014\000\030\014"
+ 880      00180C00 
+ 880      180C0018 
+ 880      0C
+ 881 0a43 00180C00 		.ascii	"\000\030\014\000\030\030\000\0308\000\177\360\000\177"
+ 881      18180018 
+ 881      38007FF0 
+ 881      007F
+ 882 0a51 E0000000 		.ascii	"\340\000\000\000\000\000\000\000\000\000\000\000\000"
+ 882      00000000 
+ 882      00000000 
+ 882      00
+ARM GAS  /tmp/ccOQTxoW.s 			page 31
+
+
+ 883 0a5e 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 883      00000000 
+ 883      00000000 
+ 883      00
+ 884 0a6b 00000000 		.ascii	"\000\000\000\000\000\000\177\370\000\177\370\000\030"
+ 884      00007FF8 
+ 884      007FF800 
+ 884      18
+ 885 0a78 18001818 		.ascii	"\030\000\030\030\000\031\230\000\031\200\000\037\200"
+ 885      00199800 
+ 885      1980001F 
+ 885      80
+ 886 0a85 001F8000 		.ascii	"\000\037\200\000\031\200\000\031\230\000\030\030\000"
+ 886      19800019 
+ 886      98001818 
+ 886      00
+ 887 0a92 1818007F 		.ascii	"\030\030\000\177\370\000\177\370\000\000\000\000\000"
+ 887      F8007FF8 
+ 887      00000000 
+ 887      00
+ 888 0a9f 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 888      00000000 
+ 888      00000000 
+ 888      00
+ 889 0aac 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 889      00000000 
+ 889      00000000 
+ 889      00
+ 890 0ab9 3FFC003F 		.ascii	"?\374\000?\374\000\014\014\000\014\014\000\014\314\000"
+ 890      FC000C0C 
+ 890      000C0C00 
+ 890      0CCC00
+ 891 0ac8 0CC0000F 		.ascii	"\014\300\000\017\300\000\017\300\000\014\300\000\014"
+ 891      C0000FC0 
+ 891      000CC000 
+ 891      0C
+ 892 0ad5 C0000C00 		.ascii	"\300\000\014\000\000\014\000\000?\300\000?\300\000\000"
+ 892      000C0000 
+ 892      3FC0003F 
+ 892      C00000
+ 893 0ae4 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 893      00000000 
+ 893      00000000 
+ 893      00
+ 894 0af1 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 894      00000000 
+ 894      00000000 
+ 894      00
+ 895 0afe 00000003 		.ascii	"\000\000\000\003\354\000\017\374\000\034\034\000\030"
+ 895      EC000FFC 
+ 895      001C1C00 
+ 895      18
+ 896 0b0b 0C00300C 		.ascii	"\014\0000\014\0000\000\0000\000\0000\376\0000\376\000"
+ 896      00300000 
+ 896      30000030 
+ 896      FE0030FE 
+ 896      00
+ARM GAS  /tmp/ccOQTxoW.s 			page 32
+
+
+ 897 0b1c 300C0038 		.ascii	"0\014\0008\014\000\034\034\000\017\374\000\003\360\000"
+ 897      0C001C1C 
+ 897      000FFC00 
+ 897      03F000
+ 898 0b2b 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 898      00000000 
+ 898      00000000 
+ 898      00
+ 899 0b38 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 899      00000000 
+ 899      00000000 
+ 899      00
+ 900 0b45 00000000 		.ascii	"\000\000\000\000~~\000~~\000\030\030\000\030\030\000"
+ 900      7E7E007E 
+ 900      7E001818 
+ 900      00181800 
+ 901 0b55 18180018 		.ascii	"\030\030\000\030\030\000\037\370\000\037\370\000\030"
+ 901      18001FF8 
+ 901      001FF800 
+ 901      18
+ 902 0b62 18001818 		.ascii	"\030\000\030\030\000\030\030\000\030\030\000~~\000~"
+ 902      00181800 
+ 902      1818007E 
+ 902      7E007E
+ 903 0b71 7E000000 		.ascii	"~\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 903      00000000 
+ 903      00000000 
+ 903      0000
+ 904 0b7f 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 904      00000000 
+ 904      00000000 
+ 904      00
+ 905 0b8c 00000000 		.ascii	"\000\000\000\000\000\037\370\000\037\370\000\001\200"
+ 905      001FF800 
+ 905      1FF80001 
+ 905      80
+ 906 0b99 00018000 		.ascii	"\000\001\200\000\001\200\000\001\200\000\001\200\000"
+ 906      01800001 
+ 906      80000180 
+ 906      00
+ 907 0ba6 01800001 		.ascii	"\001\200\000\001\200\000\001\200\000\001\200\000\001"
+ 907      80000180 
+ 907      00018000 
+ 907      01
+ 908 0bb3 80001FF8 		.ascii	"\200\000\037\370\000\037\370\000\000\000\000\000\000"
+ 908      001FF800 
+ 908      00000000 
+ 908      00
+ 909 0bc0 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 909      00000000 
+ 909      00000000 
+ 909      00
+ 910 0bcd 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\007"
+ 910      00000000 
+ 910      00000000 
+ 910      07
+ 911 0bda FE0007FE 		.ascii	"\376\000\007\376\000\0000\000\0000\000\0000\000\000"
+ARM GAS  /tmp/ccOQTxoW.s 			page 33
+
+
+ 911      00003000 
+ 911      00300000 
+ 911      300000
+ 912 0be9 30000030 		.ascii	"0\000\0000\00000\00000\00000\00000\0000`\000?\340\000"
+ 912      00303000 
+ 912      30300030 
+ 912      30003030 
+ 912      00306000 
+ 913 0c00 0F800000 		.ascii	"\017\200\000\000\000\000\000\000\000\000\000\000\000"
+ 913      00000000 
+ 913      00000000 
+ 913      00
+ 914 0c0d 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 914      00000000 
+ 914      00000000 
+ 914      00
+ 915 0c1a 00000000 		.ascii	"\000\000\000\000\000\000\000\177>\000\177>\000\0300"
+ 915      0000007F 
+ 915      3E007F3E 
+ 915      001830
+ 916 0c29 00186000 		.ascii	"\000\030`\000\030\300\000\031\200\000\033\200\000\037"
+ 916      18C00019 
+ 916      80001B80 
+ 916      001F
+ 917 0c37 C0001CE0 		.ascii	"\300\000\034\340\000\030p\000\0300\000\0308\000\177"
+ 917      00187000 
+ 917      18300018 
+ 917      38007F
+ 918 0c46 1F007F1F 		.ascii	"\037\000\177\037\000\000\000\000\000\000\000\000\000"
+ 918      00000000 
+ 918      00000000 
+ 918      00
+ 919 0c53 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 919      00000000 
+ 919      00000000 
+ 919      00
+ 920 0c60 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\177\200\000\177"
+ 920      00000000 
+ 920      007F8000 
+ 920      7F
+ 921 0c6d 80000C00 		.ascii	"\200\000\014\000\000\014\000\000\014\000\000\014\000"
+ 921      000C0000 
+ 921      0C00000C 
+ 921      00
+ 922 0c7a 000C0000 		.ascii	"\000\014\000\000\014\000\000\014\014\000\014\014\000"
+ 922      0C00000C 
+ 922      0C000C0C 
+ 922      00
+ 923 0c87 0C0C000C 		.ascii	"\014\014\000\014\014\000\177\374\000\177\374\000\000"
+ 923      0C007FFC 
+ 923      007FFC00 
+ 923      00
+ 924 0c94 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 924      00000000 
+ 924      00000000 
+ 924      00
+ 925 0ca1 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ARM GAS  /tmp/ccOQTxoW.s 			page 34
+
+
+ 925      00000000 
+ 925      00000000 
+ 925      00
+ 926 0cae 000000F0 		.ascii	"\000\000\000\360\017\000\370\037\0008\034\000<<\000"
+ 926      0F00F81F 
+ 926      00381C00 
+ 926      3C3C00
+ 927 0cbd 3C3C0036 		.ascii	"<<\0006l\0006l\0003\314\0003\314\0001\214\0000\014\000"
+ 927      6C00366C 
+ 927      0033CC00 
+ 927      33CC0031 
+ 927      8C00300C 
+ 928 0cd2 300C00FE 		.ascii	"0\014\000\376\177\000\376\177\000\000\000\000\000\000"
+ 928      7F00FE7F 
+ 928      00000000 
+ 928      0000
+ 929 0ce0 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 929      00000000 
+ 929      00000000 
+ 929      00
+ 930 0ced 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000x\376"
+ 930      00000000 
+ 930      00000000 
+ 930      78FE
+ 931 0cfb 0078FE00 		.ascii	"\000x\376\000\034\030\000\036\030\000\037\030\000\033"
+ 931      1C18001E 
+ 931      18001F18 
+ 931      001B
+ 932 0d09 18001B98 		.ascii	"\030\000\033\230\000\031\330\000\030\330\000\030\370"
+ 932      0019D800 
+ 932      18D80018 
+ 932      F8
+ 933 0d16 00187800 		.ascii	"\000\030x\000\0308\000\177\030\000\177\030\000\000\000"
+ 933      1838007F 
+ 933      18007F18 
+ 933      000000
+ 934 0d25 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 934      00000000 
+ 934      00000000 
+ 934      00
+ 935 0d32 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 935      00000000 
+ 935      00000000 
+ 935      00
+ 936 0d3f 000003C0 		.ascii	"\000\000\003\300\000\017\360\000\0348\000\030\030\000"
+ 936      000FF000 
+ 936      1C380018 
+ 936      1800
+ 937 0d4d 381C0030 		.ascii	"8\034\0000\014\0000\014\0000\014\0000\014\0008\034\000"
+ 937      0C00300C 
+ 937      00300C00 
+ 937      300C0038 
+ 937      1C00
+ 938 0d5f 1818001C 		.ascii	"\030\030\000\0348\000\017\360\000\003\300\000\000\000"
+ 938      38000FF0 
+ 938      0003C000 
+ 938      0000
+ARM GAS  /tmp/ccOQTxoW.s 			page 35
+
+
+ 939 0d6d 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 939      00000000 
+ 939      00000000 
+ 939      00
+ 940 0d7a 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 940      00000000 
+ 940      00000000 
+ 940      00
+ 941 0d87 00003FF0 		.ascii	"\000\000?\360\000?\370\000\014\034\000\014\014\000\014"
+ 941      003FF800 
+ 941      0C1C000C 
+ 941      0C000C
+ 942 0d96 0C000C0C 		.ascii	"\014\000\014\014\000\014\030\000\017\370\000\017\340"
+ 942      000C1800 
+ 942      0FF8000F 
+ 942      E0
+ 943 0da3 000C0000 		.ascii	"\000\014\000\000\014\000\000\014\000\000?\300\000?\300"
+ 943      0C00000C 
+ 943      00003FC0 
+ 943      003FC0
+ 944 0db2 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 944      00000000 
+ 944      00000000 
+ 944      00
+ 945 0dbf 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 945      00000000 
+ 945      00000000 
+ 945      00
+ 946 0dcc 00000000 		.ascii	"\000\000\000\000\000\003\300\000\017\360\000\0348\000"
+ 946      0003C000 
+ 946      0FF0001C 
+ 946      3800
+ 947 0dda 18180038 		.ascii	"\030\030\0008\034\0000\014\0000\014\0000\014\0000\014"
+ 947      1C00300C 
+ 947      00300C00 
+ 947      300C0030 
+ 947      0C
+ 948 0deb 00381C00 		.ascii	"\0008\034\000\030\030\000\0348\000\017\360\000\007\300"
+ 948      1818001C 
+ 948      38000FF0 
+ 948      0007C0
+ 949 0dfa 0007CC00 		.ascii	"\000\007\314\000\017\374\000\0148\000\000\000\000\000"
+ 949      0FFC000C 
+ 949      38000000 
+ 949      0000
+ 950 0e08 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 950      00000000 
+ 950      00000000 
+ 950      00
+ 951 0e15 00000000 		.ascii	"\000\000\000\000\177\340\000\177\360\000\0308\000\030"
+ 951      7FE0007F 
+ 951      F0001838 
+ 951      0018
+ 952 0e23 18001818 		.ascii	"\030\000\030\030\000\0308\000\037\360\000\037\300\000"
+ 952      00183800 
+ 952      1FF0001F 
+ 952      C000
+ARM GAS  /tmp/ccOQTxoW.s 			page 36
+
+
+ 953 0e31 18E00018 		.ascii	"\030\340\000\030p\000\0300\000\0308\000\177\036\000"
+ 953      70001830 
+ 953      00183800 
+ 953      7F1E00
+ 954 0e40 7F0E0000 		.ascii	"\177\016\000\000\000\000\000\000\000\000\000\000\000"
+ 954      00000000 
+ 954      00000000 
+ 954      00
+ 955 0e4d 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 955      00000000 
+ 955      00000000 
+ 955      00
+ 956 0e5a 00000000 		.ascii	"\000\000\000\000\000\000\000\007\330\000\017\370\000"
+ 956      00000007 
+ 956      D8000FF8 
+ 956      00
+ 957 0e67 1C380018 		.ascii	"\0348\000\030\030\000\030\030\000\036\000\000\017\300"
+ 957      18001818 
+ 957      001E0000 
+ 957      0FC0
+ 958 0e75 0003F000 		.ascii	"\000\003\360\000\000x\000\030\030\000\030\030\000\034"
+ 958      00780018 
+ 958      18001818 
+ 958      001C
+ 959 0e83 38001FF0 		.ascii	"8\000\037\360\000\033\340\000\000\000\000\000\000\000"
+ 959      001BE000 
+ 959      00000000 
+ 959      0000
+ 960 0e91 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 960      00000000 
+ 960      00000000 
+ 960      00
+ 961 0e9e 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000?\374\000"
+ 961      00000000 
+ 961      0000003F 
+ 961      FC00
+ 962 0eac 3FFC0031 		.ascii	"?\374\0001\214\0001\214\0001\214\0001\214\000\001\200"
+ 962      8C00318C 
+ 962      00318C00 
+ 962      318C0001 
+ 962      80
+ 963 0ebd 00018000 		.ascii	"\000\001\200\000\001\200\000\001\200\000\001\200\000"
+ 963      01800001 
+ 963      80000180 
+ 963      00
+ 964 0eca 0180000F 		.ascii	"\001\200\000\017\360\000\017\360\000\000\000\000\000"
+ 964      F0000FF0 
+ 964      00000000 
+ 964      00
+ 965 0ed7 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 965      00000000 
+ 965      00000000 
+ 965      00
+ 966 0ee4 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 966      00000000 
+ 966      00000000 
+ 966      00
+ARM GAS  /tmp/ccOQTxoW.s 			page 37
+
+
+ 967 0ef1 7E7E007E 		.ascii	"~~\000~~\000\030\030\000\030\030\000\030\030\000\030"
+ 967      7E001818 
+ 967      00181800 
+ 967      18180018 
+ 968 0f01 18001818 		.ascii	"\030\000\030\030\000\030\030\000\030\030\000\030\030"
+ 968      00181800 
+ 968      18180018 
+ 968      18
+ 969 0f0e 00181800 		.ascii	"\000\030\030\000\0140\000\017\360\000\003\300\000\000"
+ 969      0C30000F 
+ 969      F00003C0 
+ 969      0000
+ 970 0f1c 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 970      00000000 
+ 970      00000000 
+ 970      00
+ 971 0f29 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 971      00000000 
+ 971      00000000 
+ 971      00
+ 972 0f36 0000007F 		.ascii	"\000\000\000\177\177\000\177\177\000\030\014\000\014"
+ 972      7F007F7F 
+ 972      00180C00 
+ 972      0C
+ 973 0f43 18000C18 		.ascii	"\030\000\014\030\000\014\030\000\0060\000\0060\000\003"
+ 973      000C1800 
+ 973      06300006 
+ 973      300003
+ 974 0f52 60000360 		.ascii	"`\000\003`\000\003`\000\001\300\000\001\300\000\000"
+ 974      00036000 
+ 974      01C00001 
+ 974      C00000
+ 975 0f61 80000000 		.ascii	"\200\000\000\000\000\000\000\000\000\000\000\000\000"
+ 975      00000000 
+ 975      00000000 
+ 975      00
+ 976 0f6e 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 976      00000000 
+ 976      00000000 
+ 976      00
+ 977 0f7b 00000000 		.ascii	"\000\000\000\000\000\000\376?\200\376?\2000\006\000"
+ 977      0000FE3F 
+ 977      80FE3F80 
+ 977      300600
+ 978 0f8a 30060030 		.ascii	"0\006\0000\206\000\031\314\000\031\314\000\033l\000"
+ 978      860019CC 
+ 978      0019CC00 
+ 978      1B6C00
+ 979 0f99 1B6C001E 		.ascii	"\033l\000\036|\000\016"
+ 979      7C000E
+ 980 0fa0 38000E38 		.ascii	"8\000\0168\000\014\030\000\014\030\000\000\000\000\000"
+ 980      000C1800 
+ 980      0C180000 
+ 980      000000
+ 981 0faf 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 981      00000000 
+ 981      00000000 
+ARM GAS  /tmp/ccOQTxoW.s 			page 38
+
+
+ 981      00
+ 982 0fbc 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 982      00000000 
+ 982      00000000 
+ 982      00
+ 983 0fc9 7E7E007E 		.ascii	"~~\000~~\000\030\030\000\0140\000\006`\000\003\300\000"
+ 983      7E001818 
+ 983      000C3000 
+ 983      06600003 
+ 983      C000
+ 984 0fdb 01800001 		.ascii	"\001\200\000\001\200\000\003\300\000\006`\000\0140\000"
+ 984      800003C0 
+ 984      00066000 
+ 984      0C3000
+ 985 0fea 1818007E 		.ascii	"\030\030\000~~\000~~\000\000\000\000\000\000\000\000"
+ 985      7E007E7E 
+ 985      00000000 
+ 985      00000000 
+ 986 0ffa 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 986      00000000 
+ 986      00000000 
+ 986      00
+ 987 1007 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000|~\000|~\000"
+ 987      00000000 
+ 987      00007C7E 
+ 987      007C7E00 
+ 988 1017 1818000C 		.ascii	"\030\030\000\0140\000\006`\000\006`\000\003\300\000"
+ 988      30000660 
+ 988      00066000 
+ 988      03C000
+ 989 1026 01800001 		.ascii	"\001\200\000\001\200\000\001\200\000\001\200\000\001"
+ 989      80000180 
+ 989      00018000 
+ 989      01
+ 990 1033 80000FF0 		.ascii	"\200\000\017\360\000\017\360\000\000\000\000\000\000"
+ 990      000FF000 
+ 990      00000000 
+ 990      00
+ 991 1040 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 991      00000000 
+ 991      00000000 
+ 991      00
+ 992 104d 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\037"
+ 992      00000000 
+ 992      00000000 
+ 992      1F
+ 993 105a F8001FF8 		.ascii	"\370\000\037\370\000\030\030\000\0300\000\030`\000\030"
+ 993      00181800 
+ 993      18300018 
+ 993      600018
+ 994 1069 C0000180 		.ascii	"\300\000\001\200\000\003\000\000\006\030\000\014\030"
+ 994      00030000 
+ 994      0618000C 
+ 994      18
+ 995 1076 00181800 		.ascii	"\000\030\030\0000\030\000?\370\000?\370\000\000\000"
+ 995      3018003F 
+ 995      F8003FF8 
+ARM GAS  /tmp/ccOQTxoW.s 			page 39
+
+
+ 995      000000
+ 996 1085 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 996      00000000 
+ 996      00000000 
+ 996      00
+ 997 1092 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\001"
+ 997      00000000 
+ 997      00000000 
+ 997      01
+ 998 109f F00001F0 		.ascii	"\360\000\001\360\000\001\200\000\001\200\000\001\200"
+ 998      00018000 
+ 998      01800001 
+ 998      80
+ 999 10ac 00018000 		.ascii	"\000\001\200\000\001\200\000\001\200\000\001\200\000"
+ 999      01800001 
+ 999      80000180 
+ 999      00
+ 1000 10b9 01800001 		.ascii	"\001\200\000\001\200\000\001\200\000\001\200\000\001"
+ 1000      80000180 
+ 1000      00018000 
+ 1000      01
+ 1001 10c6 80000180 		.ascii	"\200\000\001\200\000\001\200\000\001\360\000\001\360"
+ 1001      00018000 
+ 1001      01F00001 
+ 1001      F0
+ 1002 10d3 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1002      00000000 
+ 1002      00000000 
+ 1002      00
+ 1003 10e0 18000018 		.ascii	"\030\000\000\030\000\000\034\000\000\014\000\000\016"
+ 1003      00001C00 
+ 1003      000C0000 
+ 1003      0E
+ 1004 10ed 00000600 		.ascii	"\000\000\006\000\000\006\000\000\003\000\000\003\000"
+ 1004      00060000 
+ 1004      03000003 
+ 1004      00
+ 1005 10fa 00018000 		.ascii	"\000\001\200\000\001\200\000\000\300\000\000\300\000"
+ 1005      01800000 
+ 1005      C00000C0 
+ 1005      00
+ 1006 1107 00600000 		.ascii	"\000`\000\000`\000\000p\000\0000\000\0008\000\000\030"
+ 1006      60000070 
+ 1006      00003000 
+ 1006      00380000 
+ 1006      18
+ 1007 1118 00001800 		.ascii	"\000\000\030\000\000\000\000\000\000\000\000\000\000"
+ 1007      00000000 
+ 1007      00000000 
+ 1007      00
+ 1008 1125 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\017\200\000\017"
+ 1008      00000000 
+ 1008      000F8000 
+ 1008      0F
+ 1009 1132 80000180 		.ascii	"\200\000\001\200\000\001\200\000\001\200\000\001\200"
+ 1009      00018000 
+ 1009      01800001 
+ARM GAS  /tmp/ccOQTxoW.s 			page 40
+
+
+ 1009      80
+ 1010 113f 00018000 		.ascii	"\000\001\200\000\001\200\000\001\200\000\001\200\000"
+ 1010      01800001 
+ 1010      80000180 
+ 1010      00
+ 1011 114c 01800001 		.ascii	"\001\200\000\001\200\000\001\200\000\001\200\000\001"
+ 1011      80000180 
+ 1011      00018000 
+ 1011      01
+ 1012 1159 80000180 		.ascii	"\200\000\001\200\000\017\200\000\017\200\000\000\000"
+ 1012      000F8000 
+ 1012      0F800000 
+ 1012      00
+ 1013 1166 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1013      00000000 
+ 1013      00000000 
+ 1013      00
+ 1014 1173 00800001 		.ascii	"\000\200\000\001\300\000\003\340\000\007p\000\0060\000"
+ 1014      C00003E0 
+ 1014      00077000 
+ 1014      063000
+ 1015 1182 0C180018 		.ascii	"\014\030\000\030\014\000\020\004\000\000\000\000\000"
+ 1015      0C001004 
+ 1015      00000000 
+ 1015      00
+ 1016 118f 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1016      00000000 
+ 1016      00000000 
+ 1016      00
+ 1017 119c 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1017      00000000 
+ 1017      00000000 
+ 1017      00
+ 1018 11a9 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1018      00000000 
+ 1018      00000000 
+ 1018      00
+ 1019 11b6 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1019      00000000 
+ 1019      00000000 
+ 1019      00
+ 1020 11c3 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1020      00000000 
+ 1020      00000000 
+ 1020      00
+ 1021 11d0 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1021      00000000 
+ 1021      00000000 
+ 1021      00
+ 1022 11dd 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1022      00000000 
+ 1022      00000000 
+ 1022      00
+ 1023 11ea 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1023      00000000 
+ 1023      00000000 
+ 1023      00
+ARM GAS  /tmp/ccOQTxoW.s 			page 41
+
+
+ 1024 11f7 000000FF 		.ascii	"\000\000\000\377\377\000\377\377\000\000\000\000\003"
+ 1024      FF00FFFF 
+ 1024      00000000 
+ 1024      03
+ 1025 1204 00000380 		.ascii	"\000\000\003\200\000\000\340\000\000`\000\000\000\000"
+ 1025      0000E000 
+ 1025      00600000 
+ 1025      0000
+ 1026 1212 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1026      00000000 
+ 1026      00000000 
+ 1026      00
+ 1027 121f 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1027      00000000 
+ 1027      00000000 
+ 1027      00
+ 1028 122c 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1028      00000000 
+ 1028      00000000 
+ 1028      00
+ 1029 1239 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1029      00000000 
+ 1029      00000000 
+ 1029      00
+ 1030 1246 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1030      00000000 
+ 1030      00000000 
+ 1030      00
+ 1031 1253 00000000 		.ascii	"\000\000\000\000\000\000\000\017\300\000\037\340\000"
+ 1031      0000000F 
+ 1031      C0001FE0 
+ 1031      00
+ 1032 1260 00300000 		.ascii	"\0000\000\0000\000\007\360\000\037\360\00080\00000\000"
+ 1032      300007F0 
+ 1032      001FF000 
+ 1032      38300030 
+ 1032      3000
+ 1033 1272 3070001F 		.ascii	"0p\000\037\374\000\017\274\000\000\000\000\000\000\000"
+ 1033      FC000FBC 
+ 1033      00000000 
+ 1033      000000
+ 1034 1281 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1034      00000000 
+ 1034      00000000 
+ 1034      00
+ 1035 128e 00000000 		.ascii	"\000\000\000\000\000\000\000\000x\000\000x\000\000\030"
+ 1035      00000000 
+ 1035      78000078 
+ 1035      000018
+ 1036 129d 00001800 		.ascii	"\000\000\030\000\000\033\340\000\037\370\000\034\030"
+ 1036      001BE000 
+ 1036      1FF8001C 
+ 1036      18
+ 1037 12aa 00180C00 		.ascii	"\000\030\014\000\030\014\000\030\014\000\030\014\000"
+ 1037      180C0018 
+ 1037      0C00180C 
+ 1037      00
+ARM GAS  /tmp/ccOQTxoW.s 			page 42
+
+
+ 1038 12b7 180C001C 		.ascii	"\030\014\000\034\030\000\177\370\000{\340\000\000\000"
+ 1038      18007FF8 
+ 1038      007BE000 
+ 1038      0000
+ 1039 12c5 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1039      00000000 
+ 1039      00000000 
+ 1039      00
+ 1040 12d2 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1040      00000000 
+ 1040      00000000 
+ 1040      00
+ 1041 12df 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\003\354"
+ 1041      00000000 
+ 1041      00000003 
+ 1041      EC
+ 1042 12ec 000FFC00 		.ascii	"\000\017\374\000\034\034\0008\014\0000\014\0000\000"
+ 1042      1C1C0038 
+ 1042      0C00300C 
+ 1042      003000
+ 1043 12fb 00300000 		.ascii	"\0000\000\0008\014\000\034\034\000\017\370\000\003\360"
+ 1043      380C001C 
+ 1043      1C000FF8 
+ 1043      0003F0
+ 1044 130a 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1044      00000000 
+ 1044      00000000 
+ 1044      00
+ 1045 1317 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1045      00000000 
+ 1045      00000000 
+ 1045      00
+ 1046 1324 00000078 		.ascii	"\000\000\000x\000\000x\000\000\030\000\000\030\000\007"
+ 1046      00007800 
+ 1046      00180000 
+ 1046      180007
+ 1047 1333 D8001FF8 		.ascii	"\330\000\037\370\000\0308\0000\030\0000\030\0000\030"
+ 1047      00183800 
+ 1047      30180030 
+ 1047      18003018 
+ 1048 1343 00301800 		.ascii	"\0000\030\0000\030\000\0308\000\037\376\000\007\336"
+ 1048      30180018 
+ 1048      38001FFE 
+ 1048      0007DE
+ 1049 1352 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1049      00000000 
+ 1049      00000000 
+ 1049      00
+ 1050 135f 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1050      00000000 
+ 1050      00000000 
+ 1050      00
+ 1051 136c 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1051      00000000 
+ 1051      00000000 
+ 1051      00
+ 1052 1379 0007E000 		.ascii	"\000\007\340\000\037\370\000\030\030\0000\014\000?\374"
+ARM GAS  /tmp/ccOQTxoW.s 			page 43
+
+
+ 1052      1FF80018 
+ 1052      1800300C 
+ 1052      003FFC
+ 1053 1388 003FFC00 		.ascii	"\000?\374\0000\000\0000\000\000\030\014\000\037\374"
+ 1053      30000030 
+ 1053      0000180C 
+ 1053      001FFC
+ 1054 1397 0007F000 		.ascii	"\000\007\360\000\000\000\000\000\000\000\000\000\000"
+ 1054      00000000 
+ 1054      00000000 
+ 1054      00
+ 1055 13a4 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1055      00000000 
+ 1055      00000000 
+ 1055      00
+ 1056 13b1 00000000 		.ascii	"\000\000\000\000\000\001\374\000\003\374\000\006\000"
+ 1056      0001FC00 
+ 1056      03FC0006 
+ 1056      00
+ 1057 13be 00060000 		.ascii	"\000\006\000\000?\370\000?\370\000\006\000\000\006\000"
+ 1057      3FF8003F 
+ 1057      F8000600 
+ 1057      000600
+ 1058 13cd 00060000 		.ascii	"\000\006\000\000\006\000\000\006\000\000\006\000\000"
+ 1058      06000006 
+ 1058      00000600 
+ 1058      00
+ 1059 13da 0600003F 		.ascii	"\006\000\000?\360\000?\360\000\000\000\000\000\000\000"
+ 1059      F0003FF0 
+ 1059      00000000 
+ 1059      000000
+ 1060 13e9 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1060      00000000 
+ 1060      00000000 
+ 1060      00
+ 1061 13f6 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1061      00000000 
+ 1061      00000000 
+ 1061      00
+ 1062 1403 00000000 		.ascii	"\000\000\000\000\000\000\000\007\336\000\037\376\000"
+ 1062      00000007 
+ 1062      DE001FFE 
+ 1062      00
+ 1063 1410 18380030 		.ascii	"\0308\0000\030\0000\030\0000\030\0000\030\0000\030\000"
+ 1063      18003018 
+ 1063      00301800 
+ 1063      30180030 
+ 1063      1800
+ 1064 1422 1838001F 		.ascii	"\0308\000\037\370\000\007\330\000\000\030\000\000\030"
+ 1064      F80007D8 
+ 1064      00001800 
+ 1064      0018
+ 1065 1430 00003800 		.ascii	"\000\0008\000\017\360\000\017\300\000\000\000\000\000"
+ 1065      0FF0000F 
+ 1065      C0000000 
+ 1065      0000
+ 1066 143e 00000000 		.ascii	"\000\000\000\000\000\000\000\000x\000\000x\000\000\030"
+ARM GAS  /tmp/ccOQTxoW.s 			page 44
+
+
+ 1066      00000000 
+ 1066      78000078 
+ 1066      000018
+ 1067 144d 00001800 		.ascii	"\000\000\030\000\000\033\340\000\037\360\000\0348\000"
+ 1067      001BE000 
+ 1067      1FF0001C 
+ 1067      3800
+ 1068 145b 18180018 		.ascii	"\030\030\000\030\030\000\030\030\000\030\030\000\030"
+ 1068      18001818 
+ 1068      00181800 
+ 1068      18
+ 1069 1468 18001818 		.ascii	"\030\000\030\030\000~~\000~~\000\000\000\000\000\000"
+ 1069      007E7E00 
+ 1069      7E7E0000 
+ 1069      00000000 
+ 1070 1478 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1070      00000000 
+ 1070      00000000 
+ 1070      00
+ 1071 1485 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\001\200\000\001"
+ 1071      00000000 
+ 1071      00018000 
+ 1071      01
+ 1072 1492 80000000 		.ascii	"\200\000\000\000\000\000\000\000\037\200\000\037\200"
+ 1072      00000000 
+ 1072      1F80001F 
+ 1072      80
+ 1073 149f 00018000 		.ascii	"\000\001\200\000\001\200\000\001\200\000\001\200\000"
+ 1073      01800001 
+ 1073      80000180 
+ 1073      00
+ 1074 14ac 01800001 		.ascii	"\001\200\000\001\200\000\001\200\000?\374\000?\374\000"
+ 1074      80000180 
+ 1074      003FFC00 
+ 1074      3FFC00
+ 1075 14bb 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1075      00000000 
+ 1075      00000000 
+ 1075      00
+ 1076 14c8 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1076      00000000 
+ 1076      00000000 
+ 1076      00
+ 1077 14d5 0000C000 		.ascii	"\000\000\300\000\000\300\000\000\000\000\000\000\000"
+ 1077      00C00000 
+ 1077      00000000 
+ 1077      00
+ 1078 14e2 1FF0001F 		.ascii	"\037\360\000\037\360\000\0000\000\0000\000\0000\000"
+ 1078      F0000030 
+ 1078      00003000 
+ 1078      003000
+ 1079 14f1 00300000 		.ascii	"\0000\000\0000\000\0000\000\0000\000\0000\000\0000\000"
+ 1079      30000030 
+ 1079      00003000 
+ 1079      00300000 
+ 1079      3000
+ 1080 1503 00300000 		.ascii	"\0000\000\0000\000\000p\000\037\340\000\037\200\000"
+ARM GAS  /tmp/ccOQTxoW.s 			page 45
+
+
+ 1080      30000070 
+ 1080      001FE000 
+ 1080      1F8000
+ 1081 1512 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000<\000"
+ 1081      00000000 
+ 1081      00000000 
+ 1081      3C00
+ 1082 1520 003C0000 		.ascii	"\000<\000\000\014\000\000\014\000\000\014\370\000\014"
+ 1082      0C00000C 
+ 1082      00000CF8 
+ 1082      000C
+ 1083 152e F8000CC0 		.ascii	"\370\000\014\300\000\015\200\000\017\200\000\017\000"
+ 1083      000D8000 
+ 1083      0F80000F 
+ 1083      00
+ 1084 153b 000F8000 		.ascii	"\000\017\200\000\015\300\000\014\340\000<|\000<|\000"
+ 1084      0DC0000C 
+ 1084      E0003C7C 
+ 1084      003C7C00 
+ 1085 154b 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1085      00000000 
+ 1085      00000000 
+ 1085      00
+ 1086 1558 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1086      00000000 
+ 1086      00000000 
+ 1086      00
+ 1087 1565 001F8000 		.ascii	"\000\037\200\000\037\200\000\001\200\000\001\200\000"
+ 1087      1F800001 
+ 1087      80000180 
+ 1087      00
+ 1088 1572 01800001 		.ascii	"\001\200\000\001\200\000\001\200\000\001\200\000\001"
+ 1088      80000180 
+ 1088      00018000 
+ 1088      01
+ 1089 157f 80000180 		.ascii	"\200\000\001\200\000\001\200\000\001\200\000\001\200"
+ 1089      00018000 
+ 1089      01800001 
+ 1089      80
+ 1090 158c 003FFC00 		.ascii	"\000?\374\000?\374\000\000\000\000\000\000\000\000\000"
+ 1090      3FFC0000 
+ 1090      00000000 
+ 1090      000000
+ 1091 159b 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1091      00000000 
+ 1091      00000000 
+ 1091      00
+ 1092 15a8 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1092      00000000 
+ 1092      00000000 
+ 1092      00
+ 1093 15b5 00000000 		.ascii	"\000\000\000\000\000\367x\000\377\374\0009\314\0001"
+ 1093      00F77800 
+ 1093      FFFC0039 
+ 1093      CC0031
+ 1094 15c4 8C00318C 		.ascii	"\214\0001\214\0001\214\0001\214\0001\214\0001\214\000"
+ 1094      00318C00 
+ARM GAS  /tmp/ccOQTxoW.s 			page 46
+
+
+ 1094      318C0031 
+ 1094      8C00318C 
+ 1094      00
+ 1095 15d5 FDEF00FD 		.ascii	"\375\357\000\375\357\000\000\000\000\000\000\000\000"
+ 1095      EF000000 
+ 1095      00000000 
+ 1095      00
+ 1096 15e2 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1096      00000000 
+ 1096      00000000 
+ 1096      00
+ 1097 15ef 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1097      00000000 
+ 1097      00000000 
+ 1097      00
+ 1098 15fc 00000000 		.ascii	"\000\000\000\000\000\000{\340\000\177\360\000\0348\000"
+ 1098      00007BE0 
+ 1098      007FF000 
+ 1098      1C3800
+ 1099 160b 18180018 		.ascii	"\030\030\000\030\030\000\030\030\000\030\030\000\030"
+ 1099      18001818 
+ 1099      00181800 
+ 1099      18
+ 1100 1618 18001818 		.ascii	"\030\000\030\030\000~~\000~~\000\000\000\000\000\000"
+ 1100      007E7E00 
+ 1100      7E7E0000 
+ 1100      00000000 
+ 1101 1628 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1101      00000000 
+ 1101      00000000 
+ 1101      00
+ 1102 1635 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1102      00000000 
+ 1102      00000000 
+ 1102      00
+ 1103 1642 00000000 		.ascii	"\000\000\000\000\000\000\000\000\003\300\000\017\360"
+ 1103      00000000 
+ 1103      03C0000F 
+ 1103      F0
+ 1104 164f 001C3800 		.ascii	"\000\0348\0008\034\0000\014\0000\014\0000\014\0008\034"
+ 1104      381C0030 
+ 1104      0C00300C 
+ 1104      00300C00 
+ 1104      381C
+ 1105 1661 001C3800 		.ascii	"\000\0348\000\017\360\000\003\300\000\000\000\000\000"
+ 1105      0FF00003 
+ 1105      C0000000 
+ 1105      0000
+ 1106 166f 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1106      00000000 
+ 1106      00000000 
+ 1106      00
+ 1107 167c 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1107      00000000 
+ 1107      00000000 
+ 1107      00
+ 1108 1689 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000{\340\000\177\370"
+ARM GAS  /tmp/ccOQTxoW.s 			page 47
+
+
+ 1108      00000000 
+ 1108      007BE000 
+ 1108      7FF8
+ 1109 1697 001C1800 		.ascii	"\000\034\030\000\030\014\000\030\014\000\030\014\000"
+ 1109      180C0018 
+ 1109      0C00180C 
+ 1109      00
+ 1110 16a4 180C0018 		.ascii	"\030\014\000\030\014\000\034\030\000\037\370\000\033"
+ 1110      0C001C18 
+ 1110      001FF800 
+ 1110      1B
+ 1111 16b1 E0001800 		.ascii	"\340\000\030\000\000\030\000\000\030\000\000\177\000"
+ 1111      00180000 
+ 1111      1800007F 
+ 1111      00
+ 1112 16be 007F0000 		.ascii	"\000\177\000\000\000\000\000\000\000\000\000\000\000"
+ 1112      00000000 
+ 1112      00000000 
+ 1112      00
+ 1113 16cb 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1113      00000000 
+ 1113      00000000 
+ 1113      00
+ 1114 16d8 000007DE 		.ascii	"\000\000\007\336\000\037\376\000\0308\0000\030\0000"
+ 1114      001FFE00 
+ 1114      18380030 
+ 1114      180030
+ 1115 16e7 18003018 		.ascii	"\030\0000\030\0000\030\0000\030\000\0308\000\037\370"
+ 1115      00301800 
+ 1115      30180018 
+ 1115      38001FF8 
+ 1116 16f7 0007D800 		.ascii	"\000\007\330\000\000\030\000\000\030\000\000\030\000"
+ 1116      00180000 
+ 1116      18000018 
+ 1116      00
+ 1117 1704 00FE0000 		.ascii	"\000\376\000\000\376\000\000\000\000\000\000\000\000"
+ 1117      FE000000 
+ 1117      00000000 
+ 1117      00
+ 1118 1711 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1118      00000000 
+ 1118      00000000 
+ 1118      00
+ 1119 171e 00000000 		.ascii	"\000\000\000\000>x\000>\374\000\007\314\000\007\000"
+ 1119      3E78003E 
+ 1119      FC0007CC 
+ 1119      000700
+ 1120 172d 00060000 		.ascii	"\000\006\000\000\006\000\000\006\000\000\006\000\000"
+ 1120      06000006 
+ 1120      00000600 
+ 1120      00
+ 1121 173a 0600003F 		.ascii	"\006\000\000?\360\000?\360\000\000\000\000\000\000\000"
+ 1121      F0003FF0 
+ 1121      00000000 
+ 1121      000000
+ 1122 1749 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1122      00000000 
+ARM GAS  /tmp/ccOQTxoW.s 			page 48
+
+
+ 1122      00000000 
+ 1122      00
+ 1123 1756 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1123      00000000 
+ 1123      00000000 
+ 1123      00
+ 1124 1763 00000000 		.ascii	"\000\000\000\000\000\000\000\007\370\000\017\370\000"
+ 1124      00000007 
+ 1124      F8000FF8 
+ 1124      00
+ 1125 1770 18180018 		.ascii	"\030\030\000\030\030\000\037\200\000\017\360\000\000"
+ 1125      18001F80 
+ 1125      000FF000 
+ 1125      00
+ 1126 177d F8001818 		.ascii	"\370\000\030\030\000\0308\000\037\360\000\037\340\000"
+ 1126      00183800 
+ 1126      1FF0001F 
+ 1126      E000
+ 1127 178b 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1127      00000000 
+ 1127      00000000 
+ 1127      00
+ 1128 1798 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1128      00000000 
+ 1128      00000000 
+ 1128      00
+ 1129 17a5 000C0000 		.ascii	"\000\014\000\000\014\000\000\014\000\000\014\000\000"
+ 1129      0C00000C 
+ 1129      00000C00 
+ 1129      00
+ 1130 17b2 3FF0003F 		.ascii	"?\360\000?\360\000\014\000\000\014\000\000\014\000\000"
+ 1130      F0000C00 
+ 1130      000C0000 
+ 1130      0C0000
+ 1131 17c1 0C00000C 		.ascii	"\014\000\000\014\000\000\014\000\000\014\034\000\007"
+ 1131      00000C00 
+ 1131      000C1C00 
+ 1131      07
+ 1132 17ce FC0003F0 		.ascii	"\374\000\003\360\000\000\000\000\000\000\000\000\000"
+ 1132      00000000 
+ 1132      00000000 
+ 1132      00
+ 1133 17db 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1133      00000000 
+ 1133      00000000 
+ 1133      00
+ 1134 17e8 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1134      00000000 
+ 1134      00000000 
+ 1134      00
+ 1135 17f5 00000000 		.ascii	"\000\000\000\000\000xx\000xx\000\030\030\000\030\030"
+ 1135      00787800 
+ 1135      78780018 
+ 1135      18001818 
+ 1136 1805 00181800 		.ascii	"\000\030\030\000\030\030\000\030\030\000\030\030\000"
+ 1136      18180018 
+ 1136      18001818 
+ARM GAS  /tmp/ccOQTxoW.s 			page 49
+
+
+ 1136      00
+ 1137 1812 1838000F 		.ascii	"\0308\000\017\376\000\007\336\000\000\000\000\000\000"
+ 1137      FE0007DE 
+ 1137      00000000 
+ 1137      0000
+ 1138 1820 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1138      00000000 
+ 1138      00000000 
+ 1138      00
+ 1139 182d 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1139      00000000 
+ 1139      00000000 
+ 1139      00
+ 1140 183a 00000000 		.ascii	"\000\000\000\000\000\000\000\000|>\000|>\000\030\030"
+ 1140      00000000 
+ 1140      7C3E007C 
+ 1140      3E001818 
+ 1141 184a 00181800 		.ascii	"\000\030\030\000\0140\000\0140\000\006`\000\006`\000"
+ 1141      0C30000C 
+ 1141      30000660 
+ 1141      00066000 
+ 1142 185a 07E00003 		.ascii	"\007\340\000\003\300\000\003\300\000\000\000\000\000"
+ 1142      C00003C0 
+ 1142      00000000 
+ 1142      00
+ 1143 1867 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1143      00000000 
+ 1143      00000000 
+ 1143      00
+ 1144 1874 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1144      00000000 
+ 1144      00000000 
+ 1144      00
+ 1145 1881 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000x<\000x<\0001\030"
+ 1145      00000000 
+ 1145      00783C00 
+ 1145      783C0031 
+ 1145      18
+ 1146 1892 00339800 		.ascii	"\0003\230\0003\230\000\032\260\000\036\360\000\036\360"
+ 1146      3398001A 
+ 1146      B0001EF0 
+ 1146      001EF0
+ 1147 18a1 001C6000 		.ascii	"\000\034`\000\014`\000\014`\000\000\000\000\000\000"
+ 1147      0C60000C 
+ 1147      60000000 
+ 1147      000000
+ 1148 18b0 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1148      00000000 
+ 1148      00000000 
+ 1148      00
+ 1149 18bd 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1149      00000000 
+ 1149      00000000 
+ 1149      00
+ 1150 18ca 00000000 		.ascii	"\000\000\000\000\000\000\000\000>|\000>|\000\0140\000"
+ 1150      00000000 
+ 1150      3E7C003E 
+ARM GAS  /tmp/ccOQTxoW.s 			page 50
+
+
+ 1150      7C000C30 
+ 1150      00
+ 1151 18db 06600003 		.ascii	"\006`\000\003\300\000\001\200\000\003\300\000\006`\000"
+ 1151      C0000180 
+ 1151      0003C000 
+ 1151      066000
+ 1152 18ea 0C30003E 		.ascii	"\0140\000>|\000>|\000\000\000\000\000\000\000\000\000"
+ 1152      7C003E7C 
+ 1152      00000000 
+ 1152      00000000 
+ 1152      00
+ 1153 18fb 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1153      00000000 
+ 1153      00000000 
+ 1153      00
+ 1154 1908 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1154      00000000 
+ 1154      00000000 
+ 1154      00
+ 1155 1915 00000000 		.ascii	"\000\000\000\000\000~\037\000~\037\000\030\014\000\014"
+ 1155      007E1F00 
+ 1155      7E1F0018 
+ 1155      0C000C
+ 1156 1924 18000C18 		.ascii	"\030\000\014\030\000\0060\000\0060\000\003`\000\003"
+ 1156      00063000 
+ 1156      06300003 
+ 1156      600003
+ 1157 1933 E00001C0 		.ascii	"\340\000\001\300\000\000\300\000\001\200\000\001\200"
+ 1157      0000C000 
+ 1157      01800001 
+ 1157      80
+ 1158 1940 00030000 		.ascii	"\000\003\000\000?\300\000?\300\000\000\000\000\000\000"
+ 1158      3FC0003F 
+ 1158      C0000000 
+ 1158      000000
+ 1159 194f 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1159      00000000 
+ 1159      00000000 
+ 1159      00
+ 1160 195c 00000000 		.ascii	"\000\000\000\000\000\000\037\370\000\037\370\000\030"
+ 1160      00001FF8 
+ 1160      001FF800 
+ 1160      18
+ 1161 1969 30001860 		.ascii	"0\000\030`\000\000\300\000\001\200\000\003\000\000\006"
+ 1161      0000C000 
+ 1161      01800003 
+ 1161      000006
+ 1162 1978 18000C18 		.ascii	"\030\000\014\030\000\037\370\000\037\370\000\000\000"
+ 1162      001FF800 
+ 1162      1FF80000 
+ 1162      00
+ 1163 1985 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1163      00000000 
+ 1163      00000000 
+ 1163      00
+ 1164 1992 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1164      00000000 
+ARM GAS  /tmp/ccOQTxoW.s 			page 51
+
+
+ 1164      00000000 
+ 1164      00
+ 1165 199f E00001E0 		.ascii	"\340\000\001\340\000\001\200\000\001\200\000\001\200"
+ 1165      00018000 
+ 1165      01800001 
+ 1165      80
+ 1166 19ac 00018000 		.ascii	"\000\001\200\000\001\200\000\001\200\000\003\200\000"
+ 1166      01800001 
+ 1166      80000380 
+ 1166      00
+ 1167 19b9 07000003 		.ascii	"\007\000\000\003\200\000\001\200\000\001\200\000\001"
+ 1167      80000180 
+ 1167      00018000 
+ 1167      01
+ 1168 19c6 80000180 		.ascii	"\200\000\001\200\000\001\200\000\001\340\000\000\340"
+ 1168      00018000 
+ 1168      01E00000 
+ 1168      E0
+ 1169 19d3 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1169      00000000 
+ 1169      00000000 
+ 1169      00
+ 1170 19e0 00000000 		.ascii	"\000\000\000\000\000\000\001\200\000\001\200\000\001"
+ 1170      00000180 
+ 1170      00018000 
+ 1170      01
+ 1171 19ed 80000180 		.ascii	"\200\000\001\200\000\001\200\000\001\200\000\001\200"
+ 1171      00018000 
+ 1171      01800001 
+ 1171      80
+ 1172 19fa 00018000 		.ascii	"\000\001\200\000\001\200\000\001\200\000\001\200\000"
+ 1172      01800001 
+ 1172      80000180 
+ 1172      00
+ 1173 1a07 01800001 		.ascii	"\001\200\000\001\200\000\001\200\000\001\200\000\001"
+ 1173      80000180 
+ 1173      00018000 
+ 1173      01
+ 1174 1a14 80000180 		.ascii	"\200\000\001\200\000\001\200\000\000\000\000\000\000"
+ 1174      00018000 
+ 1174      00000000 
+ 1174      00
+ 1175 1a21 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1175      00000000 
+ 1175      00000000 
+ 1175      00
+ 1176 1a2e 07000007 		.ascii	"\007\000\000\007\200\000\001\200\000\001\200\000\001"
+ 1176      80000180 
+ 1176      00018000 
+ 1176      01
+ 1177 1a3b 80000180 		.ascii	"\200\000\001\200\000\001\200\000\001\200\000\001\300"
+ 1177      00018000 
+ 1177      01800001 
+ 1177      C0
+ 1178 1a48 0000E000 		.ascii	"\000\000\340\000\001\300\000\001\200\000\001\200\000"
+ 1178      01C00001 
+ 1178      80000180 
+ARM GAS  /tmp/ccOQTxoW.s 			page 52
+
+
+ 1178      00
+ 1179 1a55 01800001 		.ascii	"\001\200\000\001\200\000\001\200\000\007\200\000\007"
+ 1179      80000180 
+ 1179      00078000 
+ 1179      07
+ 1180 1a62 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1180      00000000 
+ 1180      00000000 
+ 1180      00
+ 1181 1a6f 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1181      00000000 
+ 1181      00000000 
+ 1181      00
+ 1182 1a7c 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\016"
+ 1182      00000000 
+ 1182      00000000 
+ 1182      0E
+ 1183 1a89 00001F18 		.ascii	"\000\000\037\030\000;\270\0001\360\000\000\340\000\000"
+ 1183      003BB800 
+ 1183      31F00000 
+ 1183      E00000
+ 1184 1a98 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1184      00000000 
+ 1184      00000000 
+ 1184      00
+ 1185 1aa5 00000000 		.ascii	"\000\000\000\000\000\000\000\000\000\000\000\000\000"
+ 1185      00000000 
+ 1185      00000000 
+ 1185      00
+ 1186 1ab2 00000000 		.ascii	"\000\000\000\000\000\000"
+ 1186      0000
+ 1187              		.text
+ 1188              	.Letext0:
+ 1189              		.file 2 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-ea
+ 1190              		.file 3 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-ea
+ 1191              		.file 4 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-ea
+ 1192              		.file 5 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-ea
+ 1193              		.file 6 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-ea
+ 1194              		.file 7 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-ea
+ 1195              		.file 8 "Drivers/CMSIS/Include/core_cm7.h"
+ 1196              		.file 9 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
+ 1197              		.file 10 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f769xx.h"
+ 1198              		.file 11 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
+ 1199              		.file 12 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_ltdc.h"
+ 1200              		.file 13 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal.h"
+ 1201              		.file 14 "common/Inc/fonts.h"
+ 1202              		.file 15 "common/Inc/lcd.h"
+ 1203              		.file 16 "common/Src/font24.c"
+ 1204              		.file 17 "Core/Inc/main.h"
+ARM GAS  /tmp/ccOQTxoW.s 			page 53
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 lcd.c
+     /tmp/ccOQTxoW.s:17     .text.BSP_LCD_GetXSize:0000000000000000 $t
+     /tmp/ccOQTxoW.s:24     .text.BSP_LCD_GetXSize:0000000000000000 BSP_LCD_GetXSize
+     /tmp/ccOQTxoW.s:40     .text.BSP_LCD_GetXSize:0000000000000008 $d
+     /tmp/ccOQTxoW.s:45     .text.BSP_LCD_DrawPixel:0000000000000000 $t
+     /tmp/ccOQTxoW.s:51     .text.BSP_LCD_DrawPixel:0000000000000000 BSP_LCD_DrawPixel
+     /tmp/ccOQTxoW.s:89     .text.BSP_LCD_DrawPixel:000000000000001c $d
+     /tmp/ccOQTxoW.s:94     .text.DrawChar:0000000000000000 $t
+     /tmp/ccOQTxoW.s:100    .text.DrawChar:0000000000000000 DrawChar
+     /tmp/ccOQTxoW.s:296    .text.DrawChar:00000000000000bc $d
+     /tmp/ccOQTxoW.s:301    .text.BSP_LCD_DisplayChar:0000000000000000 $t
+     /tmp/ccOQTxoW.s:307    .text.BSP_LCD_DisplayChar:0000000000000000 BSP_LCD_DisplayChar
+     /tmp/ccOQTxoW.s:349    .text.BSP_LCD_DisplayChar:0000000000000020 $d
+     /tmp/ccOQTxoW.s:354    .text.config_lcd_layer:0000000000000000 $t
+     /tmp/ccOQTxoW.s:361    .text.config_lcd_layer:0000000000000000 config_lcd_layer
+     /tmp/ccOQTxoW.s:469    .text.config_lcd_layer:000000000000006c $d
+     /tmp/ccOQTxoW.s:476    .text.BSP_LCD_DisplayStringAt:0000000000000000 $t
+     /tmp/ccOQTxoW.s:483    .text.BSP_LCD_DisplayStringAt:0000000000000000 BSP_LCD_DisplayStringAt
+     /tmp/ccOQTxoW.s:659    .text.BSP_LCD_DisplayStringAt:000000000000009c $d
+                            *COM*:0000000000035200 lcd_buff
+     /tmp/ccOQTxoW.s:678    .data.Font24:0000000000000000 Font24
+     /tmp/ccOQTxoW.s:686    .rodata.Font24_Table:0000000000000000 Font24_Table
+     /tmp/ccOQTxoW.s:667    .bss.DrawProp:0000000000000000 $d
+     /tmp/ccOQTxoW.s:671    .bss.DrawProp:0000000000000000 DrawProp
+     /tmp/ccOQTxoW.s:674    .data.Font24:0000000000000000 $d
+     /tmp/ccOQTxoW.s:683    .rodata.Font24_Table:0000000000000000 $d
+
+UNDEFINED SYMBOLS
+hltdc
+HAL_LTDC_ConfigLayer
+Error_Handler

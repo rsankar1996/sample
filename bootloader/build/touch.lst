@@ -1,0 +1,166 @@
+ARM GAS  /tmp/ccmcXA0a.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.eabi_attribute 28, 1
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 1
+  10              		.eabi_attribute 34, 1
+  11              		.eabi_attribute 18, 4
+  12              		.file	"touch.c"
+  13              		.text
+  14              	.Ltext0:
+  15              		.cfi_sections	.debug_frame
+  16              		.section	.rodata.touch_init.str1.4,"aMS",%progbits,1
+  17              		.align	2
+  18              	.LC0:
+  19 0000 546F7563 		.ascii	"Touch Screen init failed\015\000"
+  19      68205363 
+  19      7265656E 
+  19      20696E69 
+  19      74206661 
+  20              		.section	.text.touch_init,"ax",%progbits
+  21              		.align	1
+  22              		.global	touch_init
+  23              		.arch armv7e-m
+  24              		.syntax unified
+  25              		.thumb
+  26              		.thumb_func
+  27              		.fpu fpv5-d16
+  29              	touch_init:
+  30              	.LFB144:
+  31              		.file 1 "common/Src/touch.c"
+   1:common/Src/touch.c **** #include <stdio.h>
+   2:common/Src/touch.c **** #include "ts.h"
+   3:common/Src/touch.c **** #include "main.h"
+   4:common/Src/touch.c **** 
+   5:common/Src/touch.c **** #define TS_WIDTH     800
+   6:common/Src/touch.c **** #define TS_HEIGHT    480
+   7:common/Src/touch.c **** 
+   8:common/Src/touch.c **** static TS_StateTypeDef TS_State;
+   9:common/Src/touch.c **** 
+  10:common/Src/touch.c **** void touch_init(void)
+  11:common/Src/touch.c **** {
+  32              		.loc 1 11 1 view -0
+  33              		.cfi_startproc
+  34              		@ args = 0, pretend = 0, frame = 0
+  35              		@ frame_needed = 0, uses_anonymous_args = 0
+  36 0000 08B5     		push	{r3, lr}
+  37              	.LCFI0:
+  38              		.cfi_def_cfa_offset 8
+  39              		.cfi_offset 3, -8
+  40              		.cfi_offset 14, -4
+  12:common/Src/touch.c ****         if (TS_Init(TS_WIDTH, TS_HEIGHT) != TS_OK) {
+  41              		.loc 1 12 9 view .LVU1
+  42              		.loc 1 12 13 is_stmt 0 view .LVU2
+ARM GAS  /tmp/ccmcXA0a.s 			page 2
+
+
+  43 0002 4FF4F071 		mov	r1, #480
+  44 0006 4FF44870 		mov	r0, #800
+  45 000a FFF7FEFF 		bl	TS_Init
+  46              	.LVL0:
+  47              		.loc 1 12 12 view .LVU3
+  48 000e 00B9     		cbnz	r0, .L4
+  49              	.L1:
+  13:common/Src/touch.c ****                 printf("Touch Screen init failed\r\n");
+  14:common/Src/touch.c ****         }
+  15:common/Src/touch.c **** }
+  50              		.loc 1 15 1 view .LVU4
+  51 0010 08BD     		pop	{r3, pc}
+  52              	.L4:
+  13:common/Src/touch.c ****                 printf("Touch Screen init failed\r\n");
+  53              		.loc 1 13 17 is_stmt 1 view .LVU5
+  54 0012 0248     		ldr	r0, .L5
+  55 0014 FFF7FEFF 		bl	puts
+  56              	.LVL1:
+  57              		.loc 1 15 1 is_stmt 0 view .LVU6
+  58 0018 FAE7     		b	.L1
+  59              	.L6:
+  60 001a 00BF     		.align	2
+  61              	.L5:
+  62 001c 00000000 		.word	.LC0
+  63              		.cfi_endproc
+  64              	.LFE144:
+  66              		.section	.text.touch_detect,"ax",%progbits
+  67              		.align	1
+  68              		.global	touch_detect
+  69              		.syntax unified
+  70              		.thumb
+  71              		.thumb_func
+  72              		.fpu fpv5-d16
+  74              	touch_detect:
+  75              	.LFB145:
+  16:common/Src/touch.c **** 
+  17:common/Src/touch.c **** void touch_detect(void)
+  18:common/Src/touch.c **** {
+  76              		.loc 1 18 1 is_stmt 1 view -0
+  77              		.cfi_startproc
+  78              		@ args = 0, pretend = 0, frame = 0
+  79              		@ frame_needed = 0, uses_anonymous_args = 0
+  80 0000 08B5     		push	{r3, lr}
+  81              	.LCFI1:
+  82              		.cfi_def_cfa_offset 8
+  83              		.cfi_offset 3, -8
+  84              		.cfi_offset 14, -4
+  19:common/Src/touch.c **** 	TS_GetState(&TS_State);
+  85              		.loc 1 19 2 view .LVU8
+  86 0002 0248     		ldr	r0, .L9
+  87 0004 FFF7FEFF 		bl	TS_GetState
+  88              	.LVL2:
+  20:common/Src/touch.c **** }
+  89              		.loc 1 20 1 is_stmt 0 view .LVU9
+  90 0008 08BD     		pop	{r3, pc}
+  91              	.L10:
+  92 000a 00BF     		.align	2
+ARM GAS  /tmp/ccmcXA0a.s 			page 3
+
+
+  93              	.L9:
+  94 000c 00000000 		.word	.LANCHOR0
+  95              		.cfi_endproc
+  96              	.LFE145:
+  98              		.section	.bss.TS_State,"aw",%nobits
+  99              		.align	2
+ 100              		.set	.LANCHOR0,. + 0
+ 103              	TS_State:
+ 104 0000 00000000 		.space	8
+ 104      00000000 
+ 105              		.text
+ 106              	.Letext0:
+ 107              		.file 2 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-ea
+ 108              		.file 3 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-ea
+ 109              		.file 4 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-ea
+ 110              		.file 5 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-ea
+ 111              		.file 6 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-ea
+ 112              		.file 7 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-ea
+ 113              		.file 8 "Drivers/CMSIS/Include/core_cm7.h"
+ 114              		.file 9 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
+ 115              		.file 10 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal.h"
+ 116              		.file 11 "common/Inc/sx8650.h"
+ 117              		.file 12 "common/Inc/ts.h"
+ 118              		.file 13 "<built-in>"
+ARM GAS  /tmp/ccmcXA0a.s 			page 4
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 touch.c
+     /tmp/ccmcXA0a.s:17     .rodata.touch_init.str1.4:0000000000000000 $d
+     /tmp/ccmcXA0a.s:21     .text.touch_init:0000000000000000 $t
+     /tmp/ccmcXA0a.s:29     .text.touch_init:0000000000000000 touch_init
+     /tmp/ccmcXA0a.s:62     .text.touch_init:000000000000001c $d
+     /tmp/ccmcXA0a.s:67     .text.touch_detect:0000000000000000 $t
+     /tmp/ccmcXA0a.s:74     .text.touch_detect:0000000000000000 touch_detect
+     /tmp/ccmcXA0a.s:94     .text.touch_detect:000000000000000c $d
+     /tmp/ccmcXA0a.s:99     .bss.TS_State:0000000000000000 $d
+     /tmp/ccmcXA0a.s:103    .bss.TS_State:0000000000000000 TS_State
+
+UNDEFINED SYMBOLS
+TS_Init
+puts
+TS_GetState

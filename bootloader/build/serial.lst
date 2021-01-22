@@ -1,0 +1,513 @@
+ARM GAS  /tmp/ccubUAIL.s 			page 1
+
+
+   1              		.cpu cortex-m7
+   2              		.eabi_attribute 28, 1
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 1
+  10              		.eabi_attribute 34, 1
+  11              		.eabi_attribute 18, 4
+  12              		.file	"serial.c"
+  13              		.text
+  14              	.Ltext0:
+  15              		.cfi_sections	.debug_frame
+  16              		.section	.text._isatty,"ax",%progbits
+  17              		.align	1
+  18              		.global	_isatty
+  19              		.arch armv7e-m
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  23              		.fpu fpv5-d16
+  25              	_isatty:
+  26              	.LVL0:
+  27              	.LFB144:
+  28              		.file 1 "common/Src/serial.c"
+   1:common/Src/serial.c **** #include "main.h"
+   2:common/Src/serial.c **** 
+   3:common/Src/serial.c **** #include <errno.h>
+   4:common/Src/serial.c **** #include <stdio.h>
+   5:common/Src/serial.c **** #include <string.h>
+   6:common/Src/serial.c **** #include <sys/types.h>
+   7:common/Src/serial.c **** #include <sys/stat.h>
+   8:common/Src/serial.c **** #include <sys/unistd.h>
+   9:common/Src/serial.c **** 
+  10:common/Src/serial.c **** extern UART_HandleTypeDef huart5;
+  11:common/Src/serial.c **** 
+  12:common/Src/serial.c **** int _isatty(int fd)
+  13:common/Src/serial.c **** {
+  29              		.loc 1 13 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  14:common/Src/serial.c ****         if (fd >= STDIN_FILENO && fd <= STDERR_FILENO)
+  33              		.loc 1 14 9 view .LVU1
+  34              		.loc 1 14 12 is_stmt 0 view .LVU2
+  35 0000 0228     		cmp	r0, #2
+  36 0002 01D8     		bhi	.L8
+  15:common/Src/serial.c ****                 return 1;
+  37              		.loc 1 15 24 view .LVU3
+  38 0004 0120     		movs	r0, #1
+  39              	.LVL1:
+  16:common/Src/serial.c **** 
+  17:common/Src/serial.c ****         errno = EBADF;
+  18:common/Src/serial.c ****         return 0;
+  19:common/Src/serial.c **** }
+ARM GAS  /tmp/ccubUAIL.s 			page 2
+
+
+  40              		.loc 1 19 1 view .LVU4
+  41 0006 7047     		bx	lr
+  42              	.LVL2:
+  43              	.L8:
+  13:common/Src/serial.c ****         if (fd >= STDIN_FILENO && fd <= STDERR_FILENO)
+  44              		.loc 1 13 1 view .LVU5
+  45 0008 08B5     		push	{r3, lr}
+  46              	.LCFI0:
+  47              		.cfi_def_cfa_offset 8
+  48              		.cfi_offset 3, -8
+  49              		.cfi_offset 14, -4
+  17:common/Src/serial.c ****         return 0;
+  50              		.loc 1 17 9 is_stmt 1 view .LVU6
+  51 000a FFF7FEFF 		bl	__errno
+  52              	.LVL3:
+  17:common/Src/serial.c ****         return 0;
+  53              		.loc 1 17 15 is_stmt 0 view .LVU7
+  54 000e 0923     		movs	r3, #9
+  55 0010 0360     		str	r3, [r0]
+  18:common/Src/serial.c **** }
+  56              		.loc 1 18 9 is_stmt 1 view .LVU8
+  18:common/Src/serial.c **** }
+  57              		.loc 1 18 16 is_stmt 0 view .LVU9
+  58 0012 0020     		movs	r0, #0
+  59              		.loc 1 19 1 view .LVU10
+  60 0014 08BD     		pop	{r3, pc}
+  61              		.cfi_endproc
+  62              	.LFE144:
+  64              		.section	.text._write,"ax",%progbits
+  65              		.align	1
+  66              		.global	_write
+  67              		.syntax unified
+  68              		.thumb
+  69              		.thumb_func
+  70              		.fpu fpv5-d16
+  72              	_write:
+  73              	.LVL4:
+  74              	.LFB145:
+  20:common/Src/serial.c **** 
+  21:common/Src/serial.c **** int _write(int fd, char *ptr, int len)
+  22:common/Src/serial.c **** {
+  75              		.loc 1 22 1 is_stmt 1 view -0
+  76              		.cfi_startproc
+  77              		@ args = 0, pretend = 0, frame = 0
+  78              		@ frame_needed = 0, uses_anonymous_args = 0
+  79              		.loc 1 22 1 is_stmt 0 view .LVU12
+  80 0000 10B5     		push	{r4, lr}
+  81              	.LCFI1:
+  82              		.cfi_def_cfa_offset 8
+  83              		.cfi_offset 4, -8
+  84              		.cfi_offset 14, -4
+  23:common/Src/serial.c ****         HAL_StatusTypeDef hstatus;
+  85              		.loc 1 23 9 is_stmt 1 view .LVU13
+  24:common/Src/serial.c **** 
+  25:common/Src/serial.c ****         if (fd == STDOUT_FILENO || fd == STDERR_FILENO) {
+  86              		.loc 1 25 9 view .LVU14
+  87              		.loc 1 25 33 is_stmt 0 view .LVU15
+ARM GAS  /tmp/ccubUAIL.s 			page 3
+
+
+  88 0002 0138     		subs	r0, r0, #1
+  89              	.LVL5:
+  90              		.loc 1 25 12 view .LVU16
+  91 0004 0128     		cmp	r0, #1
+  92 0006 09D8     		bhi	.L10
+  93 0008 1446     		mov	r4, r2
+  26:common/Src/serial.c ****                 hstatus =
+  94              		.loc 1 26 17 is_stmt 1 view .LVU17
+  27:common/Src/serial.c ****                     HAL_UART_Transmit(&huart5, (uint8_t *) ptr, len,
+  95              		.loc 1 27 21 is_stmt 0 view .LVU18
+  96 000a 4FF0FF33 		mov	r3, #-1
+  97 000e 92B2     		uxth	r2, r2
+  98              	.LVL6:
+  99              		.loc 1 27 21 view .LVU19
+ 100 0010 0748     		ldr	r0, .L14
+ 101              	.LVL7:
+ 102              		.loc 1 27 21 view .LVU20
+ 103 0012 FFF7FEFF 		bl	HAL_UART_Transmit
+ 104              	.LVL8:
+  28:common/Src/serial.c ****                                       HAL_MAX_DELAY);
+  29:common/Src/serial.c ****                 if (hstatus == HAL_OK)
+ 105              		.loc 1 29 17 is_stmt 1 view .LVU21
+ 106              		.loc 1 29 20 is_stmt 0 view .LVU22
+ 107 0016 40B9     		cbnz	r0, .L12
+  30:common/Src/serial.c ****                         return len;
+ 108              		.loc 1 30 32 view .LVU23
+ 109 0018 2046     		mov	r0, r4
+ 110              	.LVL9:
+ 111              	.L9:
+  31:common/Src/serial.c ****                 else
+  32:common/Src/serial.c ****                         return EIO;
+  33:common/Src/serial.c ****         }
+  34:common/Src/serial.c ****         errno = EBADF;
+  35:common/Src/serial.c ****         return -1;
+  36:common/Src/serial.c **** }
+ 112              		.loc 1 36 1 view .LVU24
+ 113 001a 10BD     		pop	{r4, pc}
+ 114              	.LVL10:
+ 115              	.L10:
+  34:common/Src/serial.c ****         return -1;
+ 116              		.loc 1 34 9 is_stmt 1 view .LVU25
+ 117 001c FFF7FEFF 		bl	__errno
+ 118              	.LVL11:
+  34:common/Src/serial.c ****         return -1;
+ 119              		.loc 1 34 15 is_stmt 0 view .LVU26
+ 120 0020 0923     		movs	r3, #9
+ 121 0022 0360     		str	r3, [r0]
+  35:common/Src/serial.c **** }
+ 122              		.loc 1 35 9 is_stmt 1 view .LVU27
+  35:common/Src/serial.c **** }
+ 123              		.loc 1 35 16 is_stmt 0 view .LVU28
+ 124 0024 4FF0FF30 		mov	r0, #-1
+ 125 0028 F7E7     		b	.L9
+ 126              	.LVL12:
+ 127              	.L12:
+  32:common/Src/serial.c ****         }
+ 128              		.loc 1 32 32 view .LVU29
+ARM GAS  /tmp/ccubUAIL.s 			page 4
+
+
+ 129 002a 0520     		movs	r0, #5
+ 130              	.LVL13:
+  32:common/Src/serial.c ****         }
+ 131              		.loc 1 32 32 view .LVU30
+ 132 002c F5E7     		b	.L9
+ 133              	.L15:
+ 134 002e 00BF     		.align	2
+ 135              	.L14:
+ 136 0030 00000000 		.word	huart5
+ 137              		.cfi_endproc
+ 138              	.LFE145:
+ 140              		.section	.text._close,"ax",%progbits
+ 141              		.align	1
+ 142              		.global	_close
+ 143              		.syntax unified
+ 144              		.thumb
+ 145              		.thumb_func
+ 146              		.fpu fpv5-d16
+ 148              	_close:
+ 149              	.LVL14:
+ 150              	.LFB146:
+  37:common/Src/serial.c **** 
+  38:common/Src/serial.c **** int _close(int fd)
+  39:common/Src/serial.c **** {
+ 151              		.loc 1 39 1 is_stmt 1 view -0
+ 152              		.cfi_startproc
+ 153              		@ args = 0, pretend = 0, frame = 0
+ 154              		@ frame_needed = 0, uses_anonymous_args = 0
+  40:common/Src/serial.c ****         if (fd >= STDIN_FILENO && fd <= STDERR_FILENO)
+ 155              		.loc 1 40 9 view .LVU32
+ 156              		.loc 1 40 12 is_stmt 0 view .LVU33
+ 157 0000 0228     		cmp	r0, #2
+ 158 0002 01D8     		bhi	.L23
+  41:common/Src/serial.c ****                 return 0;
+ 159              		.loc 1 41 24 view .LVU34
+ 160 0004 0020     		movs	r0, #0
+ 161              	.LVL15:
+  42:common/Src/serial.c **** 
+  43:common/Src/serial.c ****         errno = EBADF;
+  44:common/Src/serial.c ****         return -1;
+  45:common/Src/serial.c **** }
+ 162              		.loc 1 45 1 view .LVU35
+ 163 0006 7047     		bx	lr
+ 164              	.LVL16:
+ 165              	.L23:
+  39:common/Src/serial.c ****         if (fd >= STDIN_FILENO && fd <= STDERR_FILENO)
+ 166              		.loc 1 39 1 view .LVU36
+ 167 0008 08B5     		push	{r3, lr}
+ 168              	.LCFI2:
+ 169              		.cfi_def_cfa_offset 8
+ 170              		.cfi_offset 3, -8
+ 171              		.cfi_offset 14, -4
+  43:common/Src/serial.c ****         return -1;
+ 172              		.loc 1 43 9 is_stmt 1 view .LVU37
+ 173 000a FFF7FEFF 		bl	__errno
+ 174              	.LVL17:
+  43:common/Src/serial.c ****         return -1;
+ARM GAS  /tmp/ccubUAIL.s 			page 5
+
+
+ 175              		.loc 1 43 15 is_stmt 0 view .LVU38
+ 176 000e 0923     		movs	r3, #9
+ 177 0010 0360     		str	r3, [r0]
+  44:common/Src/serial.c **** }
+ 178              		.loc 1 44 9 is_stmt 1 view .LVU39
+  44:common/Src/serial.c **** }
+ 179              		.loc 1 44 16 is_stmt 0 view .LVU40
+ 180 0012 4FF0FF30 		mov	r0, #-1
+ 181              		.loc 1 45 1 view .LVU41
+ 182 0016 08BD     		pop	{r3, pc}
+ 183              		.cfi_endproc
+ 184              	.LFE146:
+ 186              		.section	.text._lseek,"ax",%progbits
+ 187              		.align	1
+ 188              		.global	_lseek
+ 189              		.syntax unified
+ 190              		.thumb
+ 191              		.thumb_func
+ 192              		.fpu fpv5-d16
+ 194              	_lseek:
+ 195              	.LVL18:
+ 196              	.LFB147:
+  46:common/Src/serial.c **** 
+  47:common/Src/serial.c **** int _lseek(int fd, int ptr, int dir)
+  48:common/Src/serial.c **** {
+ 197              		.loc 1 48 1 is_stmt 1 view -0
+ 198              		.cfi_startproc
+ 199              		@ args = 0, pretend = 0, frame = 0
+ 200              		@ frame_needed = 0, uses_anonymous_args = 0
+ 201              		.loc 1 48 1 is_stmt 0 view .LVU43
+ 202 0000 08B5     		push	{r3, lr}
+ 203              	.LCFI3:
+ 204              		.cfi_def_cfa_offset 8
+ 205              		.cfi_offset 3, -8
+ 206              		.cfi_offset 14, -4
+  49:common/Src/serial.c ****         (void) fd;
+ 207              		.loc 1 49 9 is_stmt 1 view .LVU44
+  50:common/Src/serial.c ****         (void) ptr;
+ 208              		.loc 1 50 9 view .LVU45
+  51:common/Src/serial.c ****         (void) dir;
+ 209              		.loc 1 51 9 view .LVU46
+  52:common/Src/serial.c **** 
+  53:common/Src/serial.c ****         errno = EBADF;
+ 210              		.loc 1 53 9 view .LVU47
+ 211 0002 FFF7FEFF 		bl	__errno
+ 212              	.LVL19:
+ 213              		.loc 1 53 15 is_stmt 0 view .LVU48
+ 214 0006 0923     		movs	r3, #9
+ 215 0008 0360     		str	r3, [r0]
+  54:common/Src/serial.c ****         return -1;
+ 216              		.loc 1 54 9 is_stmt 1 view .LVU49
+  55:common/Src/serial.c **** }
+ 217              		.loc 1 55 1 is_stmt 0 view .LVU50
+ 218 000a 4FF0FF30 		mov	r0, #-1
+ 219 000e 08BD     		pop	{r3, pc}
+ 220              		.cfi_endproc
+ 221              	.LFE147:
+ARM GAS  /tmp/ccubUAIL.s 			page 6
+
+
+ 223              		.section	.text._read,"ax",%progbits
+ 224              		.align	1
+ 225              		.global	_read
+ 226              		.syntax unified
+ 227              		.thumb
+ 228              		.thumb_func
+ 229              		.fpu fpv5-d16
+ 231              	_read:
+ 232              	.LVL20:
+ 233              	.LFB148:
+  56:common/Src/serial.c **** 
+  57:common/Src/serial.c **** int _read(int fd, char *ptr, int len)
+  58:common/Src/serial.c **** {
+ 234              		.loc 1 58 1 is_stmt 1 view -0
+ 235              		.cfi_startproc
+ 236              		@ args = 0, pretend = 0, frame = 0
+ 237              		@ frame_needed = 0, uses_anonymous_args = 0
+ 238              		.loc 1 58 1 is_stmt 0 view .LVU52
+ 239 0000 08B5     		push	{r3, lr}
+ 240              	.LCFI4:
+ 241              		.cfi_def_cfa_offset 8
+ 242              		.cfi_offset 3, -8
+ 243              		.cfi_offset 14, -4
+  59:common/Src/serial.c ****         HAL_StatusTypeDef hstatus;
+ 244              		.loc 1 59 9 is_stmt 1 view .LVU53
+  60:common/Src/serial.c **** 
+  61:common/Src/serial.c ****         if (fd == STDIN_FILENO) {
+ 245              		.loc 1 61 9 view .LVU54
+ 246              		.loc 1 61 12 is_stmt 0 view .LVU55
+ 247 0002 40B9     		cbnz	r0, .L27
+  62:common/Src/serial.c ****                 hstatus =
+ 248              		.loc 1 62 17 is_stmt 1 view .LVU56
+  63:common/Src/serial.c ****                     HAL_UART_Receive(&huart5, (uint8_t *) ptr, 1,
+ 249              		.loc 1 63 21 is_stmt 0 view .LVU57
+ 250 0004 4FF0FF33 		mov	r3, #-1
+ 251 0008 0122     		movs	r2, #1
+ 252              	.LVL21:
+ 253              		.loc 1 63 21 view .LVU58
+ 254 000a 0748     		ldr	r0, .L31
+ 255              	.LVL22:
+ 256              		.loc 1 63 21 view .LVU59
+ 257 000c FFF7FEFF 		bl	HAL_UART_Receive
+ 258              	.LVL23:
+  64:common/Src/serial.c ****                                      HAL_MAX_DELAY);
+  65:common/Src/serial.c ****                 if (hstatus == HAL_OK)
+ 259              		.loc 1 65 17 is_stmt 1 view .LVU60
+ 260              		.loc 1 65 20 is_stmt 0 view .LVU61
+ 261 0010 40B9     		cbnz	r0, .L29
+  66:common/Src/serial.c ****                         return 1;
+ 262              		.loc 1 66 32 view .LVU62
+ 263 0012 0120     		movs	r0, #1
+ 264              	.LVL24:
+ 265              	.L26:
+  67:common/Src/serial.c ****                 else
+  68:common/Src/serial.c ****                         return EIO;
+  69:common/Src/serial.c ****         }
+  70:common/Src/serial.c ****         errno = EBADF;
+ARM GAS  /tmp/ccubUAIL.s 			page 7
+
+
+  71:common/Src/serial.c ****         return -1;
+  72:common/Src/serial.c **** }
+ 266              		.loc 1 72 1 view .LVU63
+ 267 0014 08BD     		pop	{r3, pc}
+ 268              	.LVL25:
+ 269              	.L27:
+  70:common/Src/serial.c ****         return -1;
+ 270              		.loc 1 70 9 is_stmt 1 view .LVU64
+ 271 0016 FFF7FEFF 		bl	__errno
+ 272              	.LVL26:
+  70:common/Src/serial.c ****         return -1;
+ 273              		.loc 1 70 15 is_stmt 0 view .LVU65
+ 274 001a 0923     		movs	r3, #9
+ 275 001c 0360     		str	r3, [r0]
+  71:common/Src/serial.c **** }
+ 276              		.loc 1 71 9 is_stmt 1 view .LVU66
+  71:common/Src/serial.c **** }
+ 277              		.loc 1 71 16 is_stmt 0 view .LVU67
+ 278 001e 4FF0FF30 		mov	r0, #-1
+ 279 0022 F7E7     		b	.L26
+ 280              	.LVL27:
+ 281              	.L29:
+  68:common/Src/serial.c ****         }
+ 282              		.loc 1 68 32 view .LVU68
+ 283 0024 0520     		movs	r0, #5
+ 284              	.LVL28:
+  68:common/Src/serial.c ****         }
+ 285              		.loc 1 68 32 view .LVU69
+ 286 0026 F5E7     		b	.L26
+ 287              	.L32:
+ 288              		.align	2
+ 289              	.L31:
+ 290 0028 00000000 		.word	huart5
+ 291              		.cfi_endproc
+ 292              	.LFE148:
+ 294              		.section	.text._fstat,"ax",%progbits
+ 295              		.align	1
+ 296              		.global	_fstat
+ 297              		.syntax unified
+ 298              		.thumb
+ 299              		.thumb_func
+ 300              		.fpu fpv5-d16
+ 302              	_fstat:
+ 303              	.LVL29:
+ 304              	.LFB149:
+  73:common/Src/serial.c **** 
+  74:common/Src/serial.c **** int _fstat(int fd, struct stat *st)
+  75:common/Src/serial.c **** {
+ 305              		.loc 1 75 1 is_stmt 1 view -0
+ 306              		.cfi_startproc
+ 307              		@ args = 0, pretend = 0, frame = 0
+ 308              		@ frame_needed = 0, uses_anonymous_args = 0
+ 309              		.loc 1 75 1 is_stmt 0 view .LVU71
+ 310 0000 08B5     		push	{r3, lr}
+ 311              	.LCFI5:
+ 312              		.cfi_def_cfa_offset 8
+ 313              		.cfi_offset 3, -8
+ARM GAS  /tmp/ccubUAIL.s 			page 8
+
+
+ 314              		.cfi_offset 14, -4
+  76:common/Src/serial.c ****         if (fd >= STDIN_FILENO && fd <= STDERR_FILENO) {
+ 315              		.loc 1 76 9 is_stmt 1 view .LVU72
+ 316              		.loc 1 76 12 is_stmt 0 view .LVU73
+ 317 0002 0228     		cmp	r0, #2
+ 318 0004 04D8     		bhi	.L34
+  77:common/Src/serial.c ****                 st->st_mode = S_IFCHR;
+ 319              		.loc 1 77 17 is_stmt 1 view .LVU74
+ 320              		.loc 1 77 29 is_stmt 0 view .LVU75
+ 321 0006 4FF40053 		mov	r3, #8192
+ 322 000a 4B60     		str	r3, [r1, #4]
+  78:common/Src/serial.c ****                 return 0;
+ 323              		.loc 1 78 17 is_stmt 1 view .LVU76
+ 324              	.LVL30:
+ 325              	.L35:
+  79:common/Src/serial.c ****         }
+  80:common/Src/serial.c **** 
+  81:common/Src/serial.c ****         errno = EBADF;
+  82:common/Src/serial.c ****         return 0;
+  83:common/Src/serial.c **** }
+ 326              		.loc 1 83 1 is_stmt 0 view .LVU77
+ 327 000c 0020     		movs	r0, #0
+ 328 000e 08BD     		pop	{r3, pc}
+ 329              	.LVL31:
+ 330              	.L34:
+  81:common/Src/serial.c ****         return 0;
+ 331              		.loc 1 81 9 is_stmt 1 view .LVU78
+ 332 0010 FFF7FEFF 		bl	__errno
+ 333              	.LVL32:
+  81:common/Src/serial.c ****         return 0;
+ 334              		.loc 1 81 15 is_stmt 0 view .LVU79
+ 335 0014 0923     		movs	r3, #9
+ 336 0016 0360     		str	r3, [r0]
+  82:common/Src/serial.c **** }
+ 337              		.loc 1 82 9 is_stmt 1 view .LVU80
+  82:common/Src/serial.c **** }
+ 338              		.loc 1 82 16 is_stmt 0 view .LVU81
+ 339 0018 F8E7     		b	.L35
+ 340              		.cfi_endproc
+ 341              	.LFE149:
+ 343              		.text
+ 344              	.Letext0:
+ 345              		.file 2 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-ea
+ 346              		.file 3 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-ea
+ 347              		.file 4 "Drivers/CMSIS/Include/core_cm7.h"
+ 348              		.file 5 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h"
+ 349              		.file 6 "Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f769xx.h"
+ 350              		.file 7 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h"
+ 351              		.file 8 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_dma.h"
+ 352              		.file 9 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h"
+ 353              		.file 10 "Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal.h"
+ 354              		.file 11 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-e
+ 355              		.file 12 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-e
+ 356              		.file 13 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-e
+ 357              		.file 14 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-e
+ 358              		.file 15 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-e
+ 359              		.file 16 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-e
+ARM GAS  /tmp/ccubUAIL.s 			page 9
+
+
+ 360              		.file 17 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-e
+ 361              		.file 18 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-e
+ 362              		.file 19 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-e
+ 363              		.file 20 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-e
+ 364              		.file 21 "/home/user/STM32Toolchain/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux/gcc-arm-none-e
+ARM GAS  /tmp/ccubUAIL.s 			page 10
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 serial.c
+     /tmp/ccubUAIL.s:17     .text._isatty:0000000000000000 $t
+     /tmp/ccubUAIL.s:25     .text._isatty:0000000000000000 _isatty
+     /tmp/ccubUAIL.s:65     .text._write:0000000000000000 $t
+     /tmp/ccubUAIL.s:72     .text._write:0000000000000000 _write
+     /tmp/ccubUAIL.s:136    .text._write:0000000000000030 $d
+     /tmp/ccubUAIL.s:141    .text._close:0000000000000000 $t
+     /tmp/ccubUAIL.s:148    .text._close:0000000000000000 _close
+     /tmp/ccubUAIL.s:187    .text._lseek:0000000000000000 $t
+     /tmp/ccubUAIL.s:194    .text._lseek:0000000000000000 _lseek
+     /tmp/ccubUAIL.s:224    .text._read:0000000000000000 $t
+     /tmp/ccubUAIL.s:231    .text._read:0000000000000000 _read
+     /tmp/ccubUAIL.s:290    .text._read:0000000000000028 $d
+     /tmp/ccubUAIL.s:295    .text._fstat:0000000000000000 $t
+     /tmp/ccubUAIL.s:302    .text._fstat:0000000000000000 _fstat
+
+UNDEFINED SYMBOLS
+__errno
+HAL_UART_Transmit
+huart5
+HAL_UART_Receive
